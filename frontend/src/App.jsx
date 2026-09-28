@@ -1,139 +1,117 @@
-import { useState, useEffect } from 'react'
-import { supabase } from './supabaseClient'
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import { DataProvider } from './context/DataContext'
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { PublicLayout } from './components/layout/PublicLayout'
+import { AuthLayout } from './components/layout/AuthLayout'
+import { AppLayout } from './components/layout/AppLayout'
+import { LandingPage } from './pages/public/LandingPage'
+import { HowItWorksPage } from './pages/public/HowItWorksPage'
+import { PricingPage } from './pages/public/PricingPage'
+import { AuthPage } from './pages/auth/AuthPage'
+import { ResetPasswordPage } from './pages/auth/ResetPasswordPage'
+import { VerifyEmailPage } from './pages/auth/VerifyEmailPage'
+import { UnauthorizedPage } from './pages/auth/UnauthorizedPage'
+import { DashboardPage } from './pages/app/DashboardPage'
+import { AdminPage } from './pages/app/AdminPage'
+import { NotFoundPage } from './pages/NotFoundPage'
+import { ProjectsPage } from './pages/app/ProjectsPage'
+import { NewScanPage } from './pages/app/NewScanPage'
+import { ScanProgressPage } from './pages/app/ScanProgressPage'
+import { FindingsPage } from './pages/app/FindingsPage'
+import { FindingDetailPage } from './pages/app/FindingDetailPage'
+import { VerificationPage, VerificationsListPage } from './pages/app/VerificationPage'
+import { ReportPage } from './pages/app/ReportPage'
+import { HistoryPage } from './pages/app/HistoryPage'
+import { EvaluationPage, PublicEvaluationPage } from './pages/app/EvaluationPage'
+import { SettingsPage } from './pages/app/SettingsPage'
+import './styles/app.css'
 
-function App() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [message, setMessage] = useState('')
-  const [user, setUser] = useState(null)
-
+// Scroll to top on navigation, or to the #anchor when the URL has one
+function ScrollManager() {
+  const { pathname, hash } = useLocation()
   useEffect(() => {
-    checkUser()
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-
-    return () => {
-      subscription.unsubscribe()
+    if (hash) {
+      const el = document.getElementById(hash.slice(1))
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
+        return
+      }
     }
-  }, [])
+    window.scrollTo(0, 0)
+  }, [pathname, hash])
+  return null
+}
 
-  const checkUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    setUser(user)
-  }
-
-  const handleLogin = async (e) => {
-    e.preventDefault()
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    if (error) {
-      setMessage(error.message)
-    } else {
-      setUser(data.user)
-      setMessage('Login successful!')
-    }
-  }
-
-  const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: 'http://localhost:5174/',
-      },
-    })
-
-    if (error) {
-      setMessage(error.message)
-    }
-  }
-
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut()
-
-    if (error) {
-      setMessage(error.message)
-    } else {
-      setUser(null)
-      setMessage('Logged out successfully!')
-    }
-  }
-
+function AppRoutes() {
   return (
-    <div>
-      <h1>SecureFix AI</h1>
+    <Routes>
+      {/* Public marketing site */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/how-it-works" element={<HowItWorksPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/evaluation-results" element={<PublicEvaluationPage />} />
+      </Route>
 
-      {user ? (
-        <>
-          <h2>Welcome!</h2>
+      {/* Auth: split layout */}
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<AuthPage mode="login" />} />
+        <Route path="/signup" element={<AuthPage mode="signup" />} />
+        <Route path="/forgot-password" element={<AuthPage mode="forgot" />} />
+        {/* Opened from the reset email link */}
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        {/* Signed in, but email not confirmed yet */}
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      </Route>
 
-          <p>Logged in as: {user.email}</p>
+      {/* Signed-in app: login + verified email required */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/scans/new" element={<NewScanPage />} />
+        <Route path="/scans/:scanId/progress" element={<ScanProgressPage />} />
+        <Route path="/findings" element={<FindingsPage />} />
+        <Route path="/findings/:id" element={<FindingDetailPage />} />
+        <Route path="/findings/:id/verification" element={<VerificationPage />} />
+        <Route path="/verifications" element={<VerificationsListPage />} />
+        <Route path="/report" element={<ReportPage />} />
+        <Route path="/history" element={<HistoryPage />} />
+        <Route path="/evaluation" element={<EvaluationPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roles={['admin']}>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/app" element={<Navigate to="/dashboard" replace />} />
+      </Route>
 
-          <button onClick={handleLogout}>
-            Logout
-          </button>
-        </>
-      ) : (
-        <>
-          <h2>Login</h2>
-
-          <form onSubmit={handleLogin}>
-            <div>
-              <label>Email</label>
-              <br />
-
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <br />
-
-            <div>
-              <label>Password</label>
-              <br />
-
-              <input
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <br />
-
-            <button type="submit">
-              Login
-            </button>
-          </form>
-
-          <br />
-
-          <button onClick={handleGoogleLogin}>
-            Continue with Google
-          </button>
-        </>
-      )}
-
-      <p>{message}</p>
-    </div>
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <AuthProvider>
+        <DataProvider>
+          <ScrollManager />
+          <AppRoutes />
+        </DataProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  )
+}

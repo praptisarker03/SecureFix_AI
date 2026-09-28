@@ -35,6 +35,8 @@ eggs/
 .eggs/
 lib/
 lib64/
+# The Python lib/ rule above must not hide frontend source code
+!frontend/src/lib/
 parts/
 sdist/
 var/

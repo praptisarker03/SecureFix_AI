@@ -1,0 +1,139 @@
+/* Design tokens. Snyk-like structure (deep indigo heroes, violet primary,
+   light app surfaces) kept deliberately flat: no gradients, soft borders,
+   one accent color. Severity colors are the fixed status palette and always
+   appear next to a text label. */
+:root {
+  --ink-950: #0d0b1f;
+  --ink-900: #15122f;
+  --ink-800: #201c44;
+  --ink-line: rgba(255, 255, 255, 0.09);
+  --ink-text: #e7e5f4;
+  --ink-text-2: #a9a5c4;
+
+  --brand: #5b3df5;
+  --brand-600: #4a2de0;
+  --brand-700: #3b20bf;
+  --brand-100: #ebe7ff;
+  --brand-50: #f5f3ff;
+  --brand-on-dark: #a99bff;
+  --mint: #3ddc97;
+
+  --bg: #f6f6f8;
+  --surface: #ffffff;
+  --surface-2: #fafafb;
+  --border: #e5e5eb;
+  --border-strong: #cfcfd8;
+  --text: #121217;
+  --text-2: #4b4b57;
+  --muted: #7a7a88;
+
+  --good: #0a7d3b;
+  --good-bg: #e8f6ee;
+  --warn: #8a5a00;
+  --warn-bg: #fff6e0;
+  --bad: #c42f2f;
+  --bad-bg: #fdeeee;
+  --info-bg: #f0f3ff;
+
+  --sev-critical: #d03b3b;
+  --sev-high: #ec835a;
+  --sev-medium: #fab219;
+  --sev-low: #2a78d6;
+
+  --cat-1: #5b3df5;
+  --cat-2: #1baf7a;
+  --cat-3: #2a78d6;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 2px rgba(18, 18, 23, 0.05);
+  --shadow-md: 0 8px 24px -8px rgba(18, 18, 23, 0.12);
+  --shadow-lg: 0 24px 60px -20px rgba(8, 6, 24, 0.45);
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  --font: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  font-size: 15px;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--brand-600);
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+code,
+pre,
+.mono {
+  font-family: var(--mono);
+  font-size: 0.86em;
+}
+
+::selection {
+  background: var(--brand-100);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
