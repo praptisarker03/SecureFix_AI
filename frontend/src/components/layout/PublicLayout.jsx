@@ -3,7 +3,7 @@ import { Link, Outlet } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { Icon, Logo } from '../ui/Icons'
 
-/* Public site (landing, docs, pricing): top nav + footer */
+/* Public site (landing, docs, services): top nav + footer */
 
 function PublicNav() {
   const { user } = useAuth()
@@ -11,7 +11,7 @@ function PublicNav() {
   const links = [
     { to: '/#features', label: 'Platform' },
     { to: '/how-it-works', label: 'How it works' },
-    { to: '/pricing', label: 'Pricing' },
+    { to: '/services', label: 'Services' },
     { to: '/evaluation-results', label: 'Results' },
   ]
   return (
@@ -57,7 +57,7 @@ function PublicNav() {
 
 function PublicFooter() {
   const cols = [
-    { title: 'Product', links: [['/how-it-works', 'How it works'], ['/pricing', 'Pricing'], ['/evaluation-results', 'Evaluation'], ['/signup', 'Get started']] },
+    { title: 'Product', links: [['/how-it-works', 'How it works'], ['/services', 'Services'], ['/services#quick-check', 'Quick code check'], ['/evaluation-results', 'Evaluation'], ['/signup', 'Get started']] },
     { title: 'Resources', links: [['/how-it-works#languages', 'Supported languages'], ['/how-it-works#verification', 'Verification logic'], ['/how-it-works#privacy', 'Data & privacy'], ['/how-it-works#faq', 'FAQ']] },
     { title: 'Standards', links: [['/how-it-works#standards', 'OWASP Top 10'], ['/how-it-works#standards', 'CWE mapping'], ['/how-it-works#pipeline', 'Semgrep rules'], ['/how-it-works#pipeline', 'Gemini prompts']] },
   ]

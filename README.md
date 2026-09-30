@@ -96,7 +96,7 @@ SecureFix_Ai/
 │       │       └── LoopDiagram.jsx Login page: animated Detect → Fix → Verify ring
 │       │
 │       └── pages/
-│           ├── public/            Landing, How it works (docs), Pricing
+│           ├── public/            Landing, How it works (docs), Services
 │           ├── auth/              Login/Signup/Forgot, Reset password, Verify email, Unauthorized
 │           ├── app/               Dashboard, Projects, New scan, Scan progress, Findings,
 │           │                      Finding detail, Verification, Report, History, Evaluation,
@@ -130,7 +130,7 @@ SecureFix_Ai/
 |---|---|---|
 | Public | `/` | Landing |
 | | `/how-it-works` | Workflow, languages, verification logic, FAQ |
-| | `/pricing` | Plans, comparison table, FAQ |
+| | `/services` | All services, Quick code check (in-browser demo), supported languages |
 | | `/evaluation-results` | Public benchmark results |
 | Auth | `/login`, `/signup`, `/forgot-password` | Email + Google sign in |
 | | `/reset-password`, `/verify-email`, `/unauthorized` | Account flows |

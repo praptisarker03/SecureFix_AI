@@ -202,10 +202,10 @@ export function LandingPage() {
       <section className="cta-band">
         <div className="section-inner cta-inner">
           <Reveal as="h2">Scan your first project</Reveal>
-          <Reveal as="p" delay={60}>Free for students and individual developers.</Reveal>
+          <Reveal as="p" delay={60}>Upload a .zip and get verified fixes, or try a quick check in your browser first.</Reveal>
           <Reveal delay={120} className="hero-actions center">
             <Link to="/signup" className="btn btn-primary btn-lg">Create account</Link>
-            <Link to="/pricing" className="btn btn-outline-light btn-lg">Compare plans</Link>
+            <Link to="/services" className="btn btn-outline-light btn-lg">View services</Link>
           </Reveal>
         </div>
       </section>

@@ -8,7 +8,7 @@ import { AuthLayout } from './components/layout/AuthLayout'
 import { AppLayout } from './components/layout/AppLayout'
 import { LandingPage } from './pages/public/LandingPage'
 import { HowItWorksPage } from './pages/public/HowItWorksPage'
-import { PricingPage } from './pages/public/PricingPage'
+import { ServicesPage } from './pages/public/ServicesPage'
 import { AuthPage } from './pages/auth/AuthPage'
 import { ResetPasswordPage } from './pages/auth/ResetPasswordPage'
 import { VerifyEmailPage } from './pages/auth/VerifyEmailPage'
@@ -51,7 +51,8 @@ function AppRoutes() {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/how-it-works" element={<HowItWorksPage />} />
-        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/services" element={<ServicesPage />} />
+        <Route path="/pricing" element={<Navigate to="/services" replace />} />
         <Route path="/evaluation-results" element={<PublicEvaluationPage />} />
       </Route>
 
