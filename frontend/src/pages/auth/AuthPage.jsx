@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { PasswordStrength } from '../../components/auth/PasswordStrength'
+import { Icon } from '../../components/ui/Icons'
 import { validatePassword } from '../../lib/passwordPolicy'
 
 const CONFIG_MISSING_MESSAGE = {
@@ -186,10 +187,13 @@ export function AuthPage({ mode = 'login' }) {
   return (
     <div className="auth-card" id="auth-box">
       <div className="auth-header">
+        {authMode === 'forgot' && (
+          <span className="auth-badge"><Icon name="key" size={22} /></span>
+        )}
         <h2>{headings[authMode]}</h2>
         <p>
           {authMode === 'forgot'
-            ? 'Enter your account email and we will send you a reset link.'
+            ? 'No worries. Enter the email you signed up with and we will send you a link to set a new password.'
             : authMode === 'login'
               ? 'Log in to review findings and verify AI fixes.'
               : 'Scan your first project in under a minute. No credit card needed.'}
@@ -221,7 +225,7 @@ export function AuthPage({ mode = 'login' }) {
       )}
 
       {/* Notification Message */}
-      {message.text && (
+      {message.text && !(authMode === 'forgot' && message.type === 'success') && (
         <div className={`alert-message alert-${message.type}`} id="status-message">
           {message.text}
           {pendingVerificationEmail && (
@@ -238,7 +242,22 @@ export function AuthPage({ mode = 'login' }) {
         </div>
       )}
 
-      {/* Form */}
+      {/* Reset link sent: show next steps instead of the form */}
+      {authMode === 'forgot' && message.type === 'success' ? (
+        <div className="reset-sent">
+          <span className="reset-sent-icon"><Icon name="mail" size={26} /></span>
+          <h3>Check your inbox</h3>
+          <p>If an account exists for <b>{email}</b>, a reset link is on its way. It may take a minute, and check your spam folder too.</p>
+          <ol>
+            <li>Open the email from SecureFix AI</li>
+            <li>Click the reset link</li>
+            <li>Choose a new password</li>
+          </ol>
+          <button type="button" className="btn btn-outline btn-block" onClick={() => setMessage({ text: '', type: '' })}>
+            Use a different email
+          </button>
+        </div>
+      ) : (
       <form onSubmit={submitHandler} className="auth-form">
         {authMode === 'signup' && (
           <div className="form-group">
@@ -324,10 +343,19 @@ export function AuthPage({ mode = 'login' }) {
           ) : authMode === 'signup' ? (
             'Create account'
           ) : (
-            'Send Reset Link'
+            'Send reset link'
           )}
         </button>
+        {authMode === 'login' && (
+          <p className="auth-forgot-row">
+            Trouble signing in?{' '}
+            <button type="button" className="link-btn" onClick={() => switchMode('forgot')}>
+              Reset your password
+            </button>
+          </p>
+        )}
       </form>
+      )}
 
       {authMode !== 'forgot' && (
         <>
@@ -372,12 +400,9 @@ export function AuthPage({ mode = 'login' }) {
             </>
           )}
           {authMode === 'forgot' && (
-            <>
-              Remembered it?{' '}
-              <button type="button" className="link-btn" onClick={() => switchMode('login')}>
-                Back to Sign In
-              </button>
-            </>
+            <button type="button" className="link-btn back-link-btn" onClick={() => switchMode('login')}>
+              <Icon name="arrowLeft" size={14} /> Back to sign in
+            </button>
           )}
         </p>
       </div>

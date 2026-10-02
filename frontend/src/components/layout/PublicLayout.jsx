@@ -57,7 +57,7 @@ function PublicNav() {
 
 function PublicFooter() {
   const cols = [
-    { title: 'Product', links: [['/how-it-works', 'How it works'], ['/services', 'Services'], ['/services#quick-check', 'Quick code check'], ['/evaluation-results', 'Evaluation'], ['/signup', 'Get started']] },
+    { title: 'Product', links: [['/how-it-works', 'How it works'], ['/services', 'Services'], ['/#try-it', 'Try before sign up'], ['/evaluation-results', 'Evaluation'], ['/signup', 'Get started']] },
     { title: 'Resources', links: [['/how-it-works#languages', 'Supported languages'], ['/how-it-works#verification', 'Verification logic'], ['/how-it-works#privacy', 'Data & privacy'], ['/how-it-works#faq', 'FAQ']] },
     { title: 'Standards', links: [['/how-it-works#standards', 'OWASP Top 10'], ['/how-it-works#standards', 'CWE mapping'], ['/how-it-works#pipeline', 'Semgrep rules'], ['/how-it-works#pipeline', 'Gemini prompts']] },
   ]

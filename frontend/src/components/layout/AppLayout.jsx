@@ -98,7 +98,7 @@ export function AppLayout() {
               }}
             />
           </div>
-          <Link to="/how-it-works" className="topbar-link"><Icon name="book" size={16} /> Docs</Link>
+          <Link to="/" className="topbar-link"><Icon name="home" size={16} /> Back to website</Link>
         </header>
         {/* key restarts the enter animation on every route change */}
         <main className="app-content" key={location.pathname}>

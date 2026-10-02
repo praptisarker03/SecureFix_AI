@@ -74,10 +74,13 @@ export function Card({ title, action, children, className = '', pad = true }) {
   )
 }
 
-export function StatTile({ label, value, sub, tone }) {
+export function StatTile({ label, value, sub, tone, icon }) {
   return (
     <div className="stat-tile">
-      <div className="stat-label">{label}</div>
+      <div className="stat-label">
+        {icon && <span className="stat-icon"><Icon name={icon} size={15} /></span>}
+        {label}
+      </div>
       <div className={`stat-value ${tone ? `tone-${tone}` : ''}`}>{value}</div>
       {sub && <div className="stat-sub">{sub}</div>}
     </div>

@@ -2,9 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Icon } from '../../components/ui/Icons'
 import { Reveal } from '../../components/ui/Reveal'
-import { SeverityBadge, SeverityCounts } from '../../components/ui/Elements'
+import { QuickCheck } from '../../components/ui/QuickCheck'
 import { LANGUAGES } from '../../lib/constants'
-import { runQuickCheck, SAMPLE_CODE } from '../../lib/quickCheck'
 
 const CATEGORIES = [
   { id: 'all', label: 'All services' },
@@ -15,11 +14,19 @@ const CATEGORIES = [
   { id: 'platform', label: 'Platform' },
 ]
 
+// Where each service stands today; shown as a badge so the page stays honest
+const STATUS = {
+  live: { label: 'Available', className: 'status-live' },
+  ui: { label: 'UI ready', className: 'status-ui' },
+  dev: { label: 'In development', className: 'status-dev' },
+}
+
 const SERVICES = [
   {
     category: 'detect',
     icon: 'upload',
     title: 'Secure code upload',
+    status: 'ui',
     text: 'Upload a project as a .zip. It is size-checked, unpacked in an isolated temp folder and deleted after the scan.',
     points: ['Zip-slip protection', 'Source files only', 'Nothing kept after scanning'],
   },
@@ -27,6 +34,7 @@ const SERVICES = [
     category: 'detect',
     icon: 'scan',
     title: 'Static analysis with Semgrep',
+    status: 'dev',
     text: 'Language-specific Semgrep rule packs find injection, crypto, auth and configuration issues in your code.',
     points: ['Rule ID, file and line', 'Severity for every hit', 'Framework rules (Flask, Express, Spring…)'],
   },
@@ -34,6 +42,7 @@ const SERVICES = [
     category: 'detect',
     icon: 'shield',
     title: 'CWE & OWASP mapping',
+    status: 'dev',
     text: 'Every finding carries its CWE ID and OWASP Top 10 (2021) category, matching how security teams report.',
     points: ['CWE from rule metadata', 'OWASP Top 10 grouping', 'Standard severity levels'],
   },
@@ -41,6 +50,7 @@ const SERVICES = [
     category: 'fix',
     icon: 'sparkles',
     title: 'AI explanation & attack scenario',
+    status: 'dev',
     text: 'Gemini explains each finding in plain language and describes how an attacker could actually exploit it.',
     points: ['Plain-language explanation', 'Realistic attack scenario', 'Confidence score'],
   },
@@ -48,6 +58,7 @@ const SERVICES = [
     category: 'fix',
     icon: 'code',
     title: 'AI patch generation',
+    status: 'dev',
     text: 'A minimal patch is generated for each finding and shown as a side-by-side diff you can review before applying.',
     points: ['Minimal, focused changes', 'Reviewable diff view', 'Only ±20 lines sent to the AI'],
   },
@@ -55,6 +66,7 @@ const SERVICES = [
     category: 'verify',
     icon: 'checkCircle',
     title: 'Three-check fix verification',
+    status: 'dev',
     text: 'Each patch is re-scanned and compiled. It is marked verified only when all three checks pass.',
     points: ['Finding gone', 'No new issues introduced', 'Syntax still valid'],
   },
@@ -62,6 +74,7 @@ const SERVICES = [
     category: 'verify',
     icon: 'filter',
     title: 'Findings & false-positive rules',
+    status: 'ui',
     text: 'Filter findings by severity and status, mark false positives, and ignore a path or rule in future scans.',
     points: ['Severity and status filters', 'Mark false positives', 'Reusable ignore rules'],
   },
@@ -69,6 +82,7 @@ const SERVICES = [
     category: 'report',
     icon: 'report',
     title: 'PDF security report',
+    status: 'ui',
     text: 'A printable report with summary, severity breakdown, fix rates and the stated limitations of the scan.',
     points: ['Executive summary', 'Severity breakdown', 'Export to PDF'],
   },
@@ -76,6 +90,7 @@ const SERVICES = [
     category: 'report',
     icon: 'history',
     title: 'Scan history & compare',
+    status: 'ui',
     text: 'Compare any two scans of a project to see what was resolved, what is new and what is still open.',
     points: ['Resolved vs new findings', 'Per-project timeline', 'Progress over time'],
   },
@@ -83,6 +98,7 @@ const SERVICES = [
     category: 'report',
     icon: 'flask',
     title: 'Evaluation dashboard',
+    status: 'ui',
     text: 'Measure detection and fix quality against benchmark projects, with precision and fix-rate charts.',
     points: ['Benchmark runs', 'Fix success rate', 'Results you can cite'],
   },
@@ -90,6 +106,7 @@ const SERVICES = [
     category: 'platform',
     icon: 'book',
     title: 'Multi-language support',
+    status: 'ui',
     text: 'Python, JavaScript / Node.js, TypeScript, PHP and Java, each with its own rule packs and syntax checker.',
     points: ['5 languages', 'Per-language rule packs', 'Native syntax checks'],
   },
@@ -97,14 +114,50 @@ const SERVICES = [
     category: 'platform',
     icon: 'lock',
     title: 'Secure accounts & roles',
+    status: 'live',
     text: 'Email verification, strong password policy and role-based access with row-level security in the database.',
     points: ['Verified email required', 'Admin and user roles', 'Supabase row-level security'],
   },
 ]
 
+const STATUS_HINT = {
+  live: 'works today',
+  ui: 'screens ready, waiting on the scan backend',
+  dev: 'being built',
+}
+
+function ServiceItem({ service, open, onToggle }) {
+  const status = STATUS[service.status]
+  const panelId = `svc-${service.title.replace(/\W+/g, '-').toLowerCase()}`
+  return (
+    <div className={`svc ${open ? 'open' : ''}`}>
+      <button className="svc-head" aria-expanded={open} aria-controls={panelId} onClick={onToggle}>
+        <span className="service-icon"><Icon name={service.icon} size={18} /></span>
+        <span className="svc-title">
+          <strong>{service.title}</strong>
+          <span>{service.text}</span>
+        </span>
+        <span className={`service-status ${status.className}`}>{status.label}</span>
+        <Icon name="plus" size={18} className="svc-toggle" />
+      </button>
+      <div className="svc-body" id={panelId}>
+        <div>
+          <p>{service.text}</p>
+          <ul>
+            {service.points.map((p) => (
+              <li key={p}><Icon name="check" size={13} strokeWidth={2.6} /> {p}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ServiceGrid() {
   const [category, setCategory] = useState('all')
-  const shown = category === 'all' ? SERVICES : SERVICES.filter((s) => s.category === category)
+  const [openTitle, setOpenTitle] = useState(SERVICES[0].title)
+  const groups = CATEGORIES.filter((c) => c.id !== 'all' && (category === 'all' || category === c.id))
 
   return (
     <>
@@ -118,105 +171,32 @@ function ServiceGrid() {
           )
         })}
       </div>
-      <div className="service-grid">
-        {shown.map((s) => (
-          <article key={s.title} className="service-card">
-            <span className="service-icon"><Icon name={s.icon} size={20} /></span>
-            <span className="service-cat">{CATEGORIES.find((c) => c.id === s.category).label}</span>
-            <h3>{s.title}</h3>
-            <p>{s.text}</p>
-            <ul>
-              {s.points.map((p) => (
-                <li key={p}><Icon name="check" size={14} strokeWidth={2.4} /> {p}</li>
-              ))}
-            </ul>
-          </article>
+      <ul className="service-legend">
+        {Object.entries(STATUS).map(([id, st]) => (
+          <li key={id}><span className={`service-status ${st.className}`}>{st.label}</span> {STATUS_HINT[id]}</li>
         ))}
+      </ul>
+      <div className="svc-groups">
+        {groups.map((g) => {
+          const items = SERVICES.filter((s) => s.category === g.id)
+          return (
+            <section key={g.id} className="svc-group">
+              <h3 className="svc-group-title">{g.label} <span>{items.length}</span></h3>
+              <div className="svc-list">
+                {items.map((s) => (
+                  <ServiceItem
+                    key={s.title}
+                    service={s}
+                    open={openTitle === s.title}
+                    onToggle={() => setOpenTitle((t) => (t === s.title ? null : s.title))}
+                  />
+                ))}
+              </div>
+            </section>
+          )
+        })}
       </div>
     </>
-  )
-}
-
-function QuickCheck() {
-  const [code, setCode] = useState('')
-  const [results, setResults] = useState(null)
-
-  const counts = results?.reduce((acc, f) => ({ ...acc, [f.severity]: (acc[f.severity] || 0) + 1 }), {})
-
-  function check() {
-    setResults(runQuickCheck(code))
-  }
-
-  function loadSample() {
-    setCode(SAMPLE_CODE)
-    setResults(null)
-  }
-
-  function clear() {
-    setCode('')
-    setResults(null)
-  }
-
-  return (
-    <div className="qc">
-      <div className="qc-input">
-        <div className="qc-bar">
-          <span><Icon name="code" size={15} /> Paste your code</span>
-          <div>
-            <button className="btn btn-ghost btn-sm" onClick={loadSample}>Load example</button>
-            <button className="btn btn-ghost btn-sm" onClick={clear} disabled={!code}>Clear</button>
-          </div>
-        </div>
-        <textarea
-          className="qc-code"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          placeholder={'# Python, JavaScript, TypeScript, PHP or Java\nquery = "SELECT * FROM users WHERE id = " + user_id'}
-          spellCheck={false}
-          aria-label="Code to check"
-        />
-        <button className="btn btn-primary btn-block" onClick={check} disabled={!code.trim()}>
-          <Icon name="scan" size={16} /> Check code
-        </button>
-      </div>
-
-      <div className="qc-results" aria-live="polite">
-        {results === null && (
-          <div className="qc-empty">
-            <Icon name="shield" size={28} />
-            <p>Paste some code, or load the example, then press <b>Check code</b>.</p>
-          </div>
-        )}
-        {results?.length === 0 && (
-          <div className="qc-empty qc-clean">
-            <Icon name="checkCircle" size={28} />
-            <p><b>No common issues found.</b><br />This quick check only looks for simple patterns. Run a full scan for real coverage.</p>
-          </div>
-        )}
-        {results?.length > 0 && (
-          <>
-            <div className="qc-summary">
-              <b>{results.length} issue{results.length > 1 ? 's' : ''} found</b>
-              <SeverityCounts counts={counts} />
-            </div>
-            <ul className="qc-list">
-              {results.map((f) => (
-                <li key={f.key} className="qc-item">
-                  <div className="qc-item-head">
-                    <SeverityBadge severity={f.severity} />
-                    <strong>{f.title}</strong>
-                    <span className="tag">Line {f.line}</span>
-                  </div>
-                  <code className="qc-snippet">{f.snippet}</code>
-                  <p className="qc-fix"><Icon name="sparkles" size={14} /> {f.fix}</p>
-                  <div className="qc-meta"><span className="tag">{f.cwe}</span><span className="tag">{f.owasp}</span></div>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-    </div>
   )
 }
 

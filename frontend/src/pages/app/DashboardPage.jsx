@@ -4,9 +4,102 @@ import { useAuth } from '../../context/AuthContext'
 import { useData } from '../../context/DataContext'
 import { apiFetch } from '../../lib/api'
 import { Icon } from '../../components/ui/Icons'
-import { Card, HealthScore, PageHeader, SeverityBadge, SeverityCounts, StatTile, StatusBadge } from '../../components/ui/Elements'
+import { Card, HealthScore, PageHeader, ProgressBar, SeverityBadge, SeverityCounts, StatTile, StatusBadge } from '../../components/ui/Elements'
 import { SeverityBar, SeverityTrendChart } from '../../components/ui/Charts'
 import { SEVERITIES, formatDate, timeAgo, totalCount } from '../../lib/constants'
+
+function greeting() {
+  const h = new Date().getHours()
+  return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'
+}
+
+const SETUP_STEPS = [
+  { title: 'Create your account', text: 'Signed in with a verified email.', done: true },
+  { title: 'Run your first scan', text: 'Upload a .zip of your project and pick its language.', action: { to: '/scans/new', label: 'Upload code' } },
+  { title: 'Review findings', text: 'Severity, CWE, OWASP category and the exact line.' },
+  { title: 'Verify an AI fix', text: 'Apply a patch and let the three checks decide if it holds.' },
+]
+
+const QUICK_ACTIONS = [
+  { to: '/scans/new', icon: 'upload', title: 'Scan a project', text: 'Upload a .zip and get findings in minutes.' },
+  { to: '/#try-it', icon: 'code', title: 'Quick code check', text: 'Paste a snippet and spot risky patterns instantly.' },
+  { to: '/settings?tab=rules', icon: 'filter', title: 'Set scan rules', text: 'Ignore paths or rules you know are safe.' },
+  { to: '/how-it-works', icon: 'book', title: 'How it works', text: 'The pipeline and what "verified" means.' },
+]
+
+// First-run dashboard: no projects yet, so guide the user to a first scan
+function EmptyDashboard({ name }) {
+  const done = SETUP_STEPS.filter((s) => s.done).length
+  const current = SETUP_STEPS.findIndex((s) => !s.done)
+  const today = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })
+
+  return (
+    <>
+      <section className="dash-hero">
+        <div className="dash-hero-copy">
+          <span className="dash-date">{today}</span>
+          <h1>{greeting()}, {name}</h1>
+          <p>Your workspace is ready. Scan a project to see its security posture, AI-generated fixes and verification results here.</p>
+          <div className="dash-hero-actions">
+            <Link to="/scans/new" className="btn btn-primary btn-glow"><Icon name="upload" size={16} /> Start your first scan</Link>
+            <Link to="/#try-it" className="btn btn-outline-light"><Icon name="code" size={16} /> Try a quick check</Link>
+          </div>
+        </div>
+        <div className="dash-hero-art" aria-hidden="true">
+          <span className="dash-orbit" />
+          <span className="dash-shield"><Icon name="shield" size={44} strokeWidth={1.5} /></span>
+        </div>
+      </section>
+
+      <div className="dash-grid">
+        <Card title="Getting started" action={<span className="pill pill-info">{done} of {SETUP_STEPS.length} done</span>}>
+          <ProgressBar value={(done / SETUP_STEPS.length) * 100} />
+          <ol className="setup-list">
+            {SETUP_STEPS.map((step, i) => (
+              <li key={step.title} className={step.done ? 'done' : i === current ? 'current' : ''}>
+                <span className="setup-mark">{step.done ? <Icon name="check" size={14} strokeWidth={3} /> : i + 1}</span>
+                <div className="setup-text">
+                  <strong>{step.title}</strong>
+                  <span>{step.text}</span>
+                </div>
+                {i === current && step.action && (
+                  <Link to={step.action.to} className="btn btn-primary btn-sm">{step.action.label} <Icon name="arrowRight" size={14} /></Link>
+                )}
+              </li>
+            ))}
+          </ol>
+        </Card>
+        <Card title="Security score">
+          <div className="score">
+            <svg viewBox="0 0 120 120" className="score-ring" aria-hidden="true">
+              <circle cx="60" cy="60" r="50" />
+            </svg>
+            <div className="score-value"><b>—</b><span>No data yet</span></div>
+          </div>
+          <p className="muted small score-note">Your score appears after the first scan, based on open findings and their severity.</p>
+        </Card>
+      </div>
+
+      <div className="quick-actions">
+        {QUICK_ACTIONS.map((a) => (
+          <Link key={a.title} to={a.to} className="quick-action">
+            <span className="quick-icon"><Icon name={a.icon} size={20} /></span>
+            <strong>{a.title}</strong>
+            <span>{a.text}</span>
+            <Icon name="arrowRight" size={16} className="quick-arrow" />
+          </Link>
+        ))}
+      </div>
+
+      <div className="kpi-grid">
+        <StatTile icon="bug" label="Open findings" value="—" sub="No scans yet" />
+        <StatTile icon="checkCircle" label="Fix success rate" value="—" sub="No fixes yet" />
+        <StatTile icon="folder" label="Projects" value="0" sub="Add one with a scan" />
+        <StatTile icon="alert" label="Critical findings" value="—" sub="Nothing to fix yet" />
+      </div>
+    </>
+  )
+}
 
 export function DashboardPage() {
   const { user } = useAuth()
@@ -27,44 +120,7 @@ export function DashboardPage() {
   const name = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'there'
 
   if (projects.length === 0) {
-    const steps = [
-      ['Upload your code', 'A .zip of the project and its language.', true],
-      ['Review findings', 'Severity, CWE, OWASP category and location.'],
-      ['Apply an AI fix', 'Read the explanation and the proposed diff.'],
-      ['Check verification', 'Three checks decide whether the fix holds.'],
-    ]
-    return (
-      <>
-        <PageHeader title={`Welcome, ${name}`} subtitle="Nothing scanned yet. Here is how to get going." />
-        <div className="onboard">
-          <div className="onboard-main">
-            <div className="onboard-drop" aria-hidden="true">
-              <span className="onboard-file"><Icon name="zip" size={22} /></span>
-            </div>
-            <h2>Scan your first project</h2>
-            <p>Upload a .zip of your source code. SecureFix AI scans it with Semgrep, suggests fixes with Gemini and verifies each fix before you use it.</p>
-            <Link to="/scans/new" className="btn btn-primary"><Icon name="upload" size={16} /> Upload code</Link>
-          </div>
-          <ol className="onboard-list">
-            {steps.map(([title, text, current], i) => (
-              <li key={title} className={current ? 'current' : ''}>
-                <span className="onboard-n">{i + 1}</span>
-                <div>
-                  <strong>{title}</strong>
-                  <span>{text}</span>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-        <div className="kpi-grid">
-          <StatTile label="Open findings" value="—" sub="No scans yet" />
-          <StatTile label="Fix success rate" value="—" sub="No fixes yet" />
-          <StatTile label="Projects" value="0" />
-          <StatTile label="Critical findings" value="—" />
-        </div>
-      </>
-    )
+    return <EmptyDashboard name={name} />
   }
 
   const totals = SEVERITIES.reduce((acc, s) => ({ ...acc, [s]: projects.reduce((sum, p) => sum + p.counts[s], 0) }), {})
