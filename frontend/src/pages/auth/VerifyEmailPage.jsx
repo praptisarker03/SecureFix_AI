@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
+import { LoadingScreen } from '../../components/ui/Elements'
 import { useAuth } from '../../context/AuthContext'
 
 // Shown to signed-in users whose email address is not confirmed yet.
@@ -10,12 +11,7 @@ export function VerifyEmailPage() {
   const [message, setMessage] = useState({ text: '', type: '' })
 
   if (authLoading) {
-    return (
-      <div className="loading-screen">
-        <div className="loader-pulse"></div>
-        <p>Verifying secure session...</p>
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   if (!user) return <Navigate to="/login" replace />

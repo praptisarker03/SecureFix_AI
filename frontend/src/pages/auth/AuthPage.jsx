@@ -31,8 +31,6 @@ export function AuthPage({ mode = 'login' }) {
   const location = useLocation()
   const redirectTo = location.state?.from?.pathname || '/dashboard'
 
-  // The route decides the mode: /login, /signup or /forgot-password
-  const authMode = mode
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -55,12 +53,14 @@ export function AuthPage({ mode = 'login' }) {
     setConfirmPassword('')
   }
 
+  const checkConfigured = () => {
+    if (!isSupabaseConfigured) setMessage(CONFIG_MISSING_MESSAGE)
+    return isSupabaseConfigured
+  }
+
   const handleLogin = async (e) => {
     e.preventDefault()
-    if (!isSupabaseConfigured) {
-      setMessage(CONFIG_MISSING_MESSAGE)
-      return
-    }
+    if (!checkConfigured()) return
 
     setLoading(true)
     setMessage({ text: '', type: '' })
@@ -83,10 +83,7 @@ export function AuthPage({ mode = 'login' }) {
 
   const handleSignUp = async (e) => {
     e.preventDefault()
-    if (!isSupabaseConfigured) {
-      setMessage(CONFIG_MISSING_MESSAGE)
-      return
-    }
+    if (!checkConfigured()) return
 
     const passwordError = validatePassword(password, email)
     if (passwordError) {
@@ -124,10 +121,7 @@ export function AuthPage({ mode = 'login' }) {
 
   const handleForgotPassword = async (e) => {
     e.preventDefault()
-    if (!isSupabaseConfigured) {
-      setMessage(CONFIG_MISSING_MESSAGE)
-      return
-    }
+    if (!checkConfigured()) return
 
     setLoading(true)
     setMessage({ text: '', type: '' })
@@ -158,10 +152,7 @@ export function AuthPage({ mode = 'login' }) {
   }
 
   const handleOAuth = async () => {
-    if (!isSupabaseConfigured) {
-      setMessage(CONFIG_MISSING_MESSAGE)
-      return
-    }
+    if (!checkConfigured()) return
 
     setLoading(true)
     try {
@@ -176,7 +167,7 @@ export function AuthPage({ mode = 'login' }) {
     login: handleLogin,
     signup: handleSignUp,
     forgot: handleForgotPassword,
-  }[authMode]
+  }[mode]
 
   const headings = {
     login: 'Welcome back',
@@ -187,27 +178,27 @@ export function AuthPage({ mode = 'login' }) {
   return (
     <div className="auth-card" id="auth-box">
       <div className="auth-header">
-        {authMode === 'forgot' && (
+        {mode === 'forgot' && (
           <span className="auth-badge"><Icon name="key" size={22} /></span>
         )}
-        <h2>{headings[authMode]}</h2>
+        <h2>{headings[mode]}</h2>
         <p>
-          {authMode === 'forgot'
+          {mode === 'forgot'
             ? 'No worries. Enter the email you signed up with and we will send you a link to set a new password.'
-            : authMode === 'login'
+            : mode === 'login'
               ? 'Log in to review findings and verify AI fixes.'
               : 'Scan your first project in under a minute. No credit card needed.'}
         </p>
       </div>
 
       {/* Mode Toggle Tabs */}
-      {authMode !== 'forgot' && (
+      {mode !== 'forgot' && (
         <div className="tab-container" role="tablist">
           <button
             id="tab-login"
             role="tab"
-            aria-selected={authMode === 'login'}
-            className={`tab-btn ${authMode === 'login' ? 'active' : ''}`}
+            aria-selected={mode === 'login'}
+            className={`tab-btn ${mode === 'login' ? 'active' : ''}`}
             onClick={() => switchMode('login')}
           >
             Sign In
@@ -215,8 +206,8 @@ export function AuthPage({ mode = 'login' }) {
           <button
             id="tab-signup"
             role="tab"
-            aria-selected={authMode === 'signup'}
-            className={`tab-btn ${authMode === 'signup' ? 'active' : ''}`}
+            aria-selected={mode === 'signup'}
+            className={`tab-btn ${mode === 'signup' ? 'active' : ''}`}
             onClick={() => switchMode('signup')}
           >
             Sign Up
@@ -225,7 +216,7 @@ export function AuthPage({ mode = 'login' }) {
       )}
 
       {/* Notification Message */}
-      {message.text && !(authMode === 'forgot' && message.type === 'success') && (
+      {message.text && !(mode === 'forgot' && message.type === 'success') && (
         <div className={`alert-message alert-${message.type}`} id="status-message">
           {message.text}
           {pendingVerificationEmail && (
@@ -243,7 +234,7 @@ export function AuthPage({ mode = 'login' }) {
       )}
 
       {/* Reset link sent: show next steps instead of the form */}
-      {authMode === 'forgot' && message.type === 'success' ? (
+      {mode === 'forgot' && message.type === 'success' ? (
         <div className="reset-sent">
           <span className="reset-sent-icon"><Icon name="mail" size={26} /></span>
           <h3>Check your inbox</h3>
@@ -259,7 +250,7 @@ export function AuthPage({ mode = 'login' }) {
         </div>
       ) : (
       <form onSubmit={submitHandler} className="auth-form">
-        {authMode === 'signup' && (
+        {mode === 'signup' && (
           <div className="form-group">
             <label htmlFor="input-fullname">Full Name</label>
             <input
@@ -287,11 +278,11 @@ export function AuthPage({ mode = 'login' }) {
           />
         </div>
 
-        {authMode !== 'forgot' && (
+        {mode !== 'forgot' && (
           <div className="form-group">
             <div className="label-row">
               <label htmlFor="input-password">Password</label>
-              {authMode === 'login' && (
+              {mode === 'login' && (
                 <button
                   type="button"
                   className="link-btn link-btn-small"
@@ -306,16 +297,16 @@ export function AuthPage({ mode = 'login' }) {
               id="input-password"
               type="password"
               placeholder="••••••••••••"
-              autoComplete={authMode === 'login' ? 'current-password' : 'new-password'}
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            {authMode === 'signup' && <PasswordStrength password={password} />}
+            {mode === 'signup' && <PasswordStrength password={password} />}
           </div>
         )}
 
-        {authMode === 'signup' && (
+        {mode === 'signup' && (
           <div className="form-group">
             <label htmlFor="input-confirm-password">Confirm Password</label>
             <input
@@ -338,26 +329,18 @@ export function AuthPage({ mode = 'login' }) {
         >
           {loading ? (
             <span className="spinner-text">Processing...</span>
-          ) : authMode === 'login' ? (
+          ) : mode === 'login' ? (
             'Log in'
-          ) : authMode === 'signup' ? (
+          ) : mode === 'signup' ? (
             'Create account'
           ) : (
             'Send reset link'
           )}
         </button>
-        {authMode === 'login' && (
-          <p className="auth-forgot-row">
-            Trouble signing in?{' '}
-            <button type="button" className="link-btn" onClick={() => switchMode('forgot')}>
-              Reset your password
-            </button>
-          </p>
-        )}
       </form>
       )}
 
-      {authMode !== 'forgot' && (
+      {mode !== 'forgot' && (
         <>
           <div className="divider">
             <span>OR CONTINUE WITH</span>
@@ -383,7 +366,7 @@ export function AuthPage({ mode = 'login' }) {
 
       <div className="auth-footer">
         <p>
-          {authMode === 'login' && (
+          {mode === 'login' && (
             <>
               Don&apos;t have an account?{' '}
               <button type="button" className="link-btn" onClick={() => switchMode('signup')}>
@@ -391,7 +374,7 @@ export function AuthPage({ mode = 'login' }) {
               </button>
             </>
           )}
-          {authMode === 'signup' && (
+          {mode === 'signup' && (
             <>
               Already have an account?{' '}
               <button type="button" className="link-btn" onClick={() => switchMode('login')}>
@@ -399,7 +382,7 @@ export function AuthPage({ mode = 'login' }) {
               </button>
             </>
           )}
-          {authMode === 'forgot' && (
+          {mode === 'forgot' && (
             <button type="button" className="link-btn back-link-btn" onClick={() => switchMode('login')}>
               <Icon name="arrowLeft" size={14} /> Back to sign in
             </button>

@@ -1,18 +1,9 @@
 import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { useData } from '../../context/DataContext'
 import { Icon } from '../../components/ui/Icons'
-import { Card, PageHeader, ProgressBar } from '../../components/ui/Elements'
+import { Card, PageHeader } from '../../components/ui/Elements'
 import { PasswordStrength } from '../../components/auth/PasswordStrength'
 import { validatePassword } from '../../lib/passwordPolicy'
-
-const TABS = [
-  ['profile', 'Profile', 'user'],
-  ['usage', 'API usage', 'zap'],
-  ['integrations', 'Integrations', 'github'],
-  ['rules', 'False-positive rules', 'filter'],
-]
 
 function PasswordField({ id, label, value, onChange, autoComplete, children }) {
   const [show, setShow] = useState(false)
@@ -135,126 +126,28 @@ function SecurityCard() {
   )
 }
 
-function ProfileTab() {
+export function SettingsPage() {
   const { user, role, emailVerified } = useAuth()
   const name = user?.user_metadata?.full_name || user?.user_metadata?.name || ''
   const provider = user?.app_metadata?.provider || 'email'
 
   return (
-    <div className="stack">
-      <Card title="Profile">
-        <div className="profile-row">
-          <div className="avatar avatar-lg">{(name || user?.email || 'U').charAt(0).toUpperCase()}</div>
-          <dl className="details">
-            <dt>Name</dt><dd>{name || '—'}</dd>
-            <dt>Email</dt><dd>{user?.email} {emailVerified && <span className="pill pill-good">Verified</span>}</dd>
-            <dt>Sign-in method</dt><dd>{provider}</dd>
-            <dt>Role</dt><dd>{role}</dd>
-            <dt>Member since</dt><dd>{user?.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}</dd>
-          </dl>
-        </div>
-      </Card>
-      <SecurityCard />
-    </div>
-  )
-}
-
-function UsageTab() {
-  return (
-    <div className="stack">
-      <div className="grid-2">
-        <Card title="Gemini requests">
-          <div className="usage-num"><b>0</b> this month</div>
-          <ProgressBar value={0} />
-        </Card>
-        <Card title="Scans">
-          <div className="usage-num"><b>0</b> this month</div>
-          <ProgressBar value={0} />
-        </Card>
-      </div>
-      <p className="small muted">Usage is counted once scanning is connected.</p>
-    </div>
-  )
-}
-
-function IntegrationsTab() {
-  return (
-    <Card title="GitHub">
-      <div className="integration">
-        <span className="integration-icon"><Icon name="github" size={26} /></span>
-        <div>
-          <strong>Not connected</strong>
-          <p className="muted small">Import repositories directly instead of uploading a .zip, and open pull requests with verified fixes.</p>
-        </div>
-        <button className="btn btn-outline" disabled title="Coming soon">Coming soon</button>
-      </div>
-    </Card>
-  )
-}
-
-function RulesTab() {
-  const { fpRules, addFpRule, removeFpRule } = useData()
-  const [pattern, setPattern] = useState('')
-  const [rule, setRule] = useState('')
-  const [reason, setReason] = useState('')
-
-  const add = (e) => {
-    e.preventDefault()
-    if (!pattern.trim()) return
-    addFpRule({ pattern: pattern.trim(), rule: rule.trim() || '*', reason: reason.trim() })
-    setPattern('')
-    setRule('')
-    setReason('')
-  }
-
-  return (
-    <Card title="False-positive rules" pad={false}>
-      <p className="card-intro muted small">Findings matching a rule will be hidden in future scans. Use glob patterns for paths and a Semgrep rule ID (or *) for rules.</p>
-      <div className="table-wrap">
-        <table className="table">
-          <thead><tr><th>Path pattern</th><th>Rule ID</th><th>Reason</th><th /></tr></thead>
-          <tbody>
-            {fpRules.length === 0 && <tr><td colSpan={4} className="muted">No rules yet.</td></tr>}
-            {fpRules.map((r) => (
-              <tr key={r.id}>
-                <td className="mono">{r.pattern}</td>
-                <td className="mono">{r.rule}</td>
-                <td>{r.reason || <span className="muted">—</span>}</td>
-                <td><button className="icon-btn" onClick={() => removeFpRule(r.id)} aria-label="Delete rule"><Icon name="trash" size={16} /></button></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <form className="rule-form" onSubmit={add}>
-        <input placeholder="Path, e.g. tests/**" value={pattern} onChange={(e) => setPattern(e.target.value)} aria-label="Path pattern" />
-        <input placeholder="Rule ID or *" value={rule} onChange={(e) => setRule(e.target.value)} aria-label="Rule ID" />
-        <input placeholder="Reason" value={reason} onChange={(e) => setReason(e.target.value)} aria-label="Reason" />
-        <button className="btn btn-primary"><Icon name="plus" size={16} /> Add rule</button>
-      </form>
-    </Card>
-  )
-}
-
-export function SettingsPage() {
-  const [params, setParams] = useSearchParams()
-  const tab = TABS.some(([id]) => id === params.get('tab')) ? params.get('tab') : 'profile'
-  const Panel = { profile: ProfileTab, usage: UsageTab, integrations: IntegrationsTab, rules: RulesTab }[tab]
-
-  return (
     <>
-      <PageHeader title="Settings" subtitle="Manage your profile, usage, integrations and scan rules." />
-      <div className="settings">
-        <nav className="settings-nav">
-          {TABS.map(([id, label, icon]) => (
-            <button key={id} className={tab === id ? 'active' : ''} onClick={() => setParams({ tab: id })}>
-              <Icon name={icon} size={16} /> {label}
-            </button>
-          ))}
-        </nav>
-        <div className="settings-body">
-          <Panel />
-        </div>
+      <PageHeader title="Settings" subtitle="Your profile and password." />
+      <div className="settings-body stack">
+        <Card title="Profile">
+          <div className="profile-row">
+            <div className="avatar avatar-lg">{(name || user?.email || 'U').charAt(0).toUpperCase()}</div>
+            <dl className="details">
+              <dt>Name</dt><dd>{name || '—'}</dd>
+              <dt>Email</dt><dd>{user?.email} {emailVerified && <span className="pill pill-good">Verified</span>}</dd>
+              <dt>Sign-in method</dt><dd>{provider}</dd>
+              <dt>Role</dt><dd>{role}</dd>
+              <dt>Member since</dt><dd>{user?.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}</dd>
+            </dl>
+          </div>
+        </Card>
+        <SecurityCard />
       </div>
     </>
   )

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { LoadingScreen } from '../../components/ui/Elements'
 import { useAuth } from '../../context/AuthContext'
 import { PasswordStrength } from '../../components/auth/PasswordStrength'
 import { validatePassword } from '../../lib/passwordPolicy'
@@ -16,12 +17,7 @@ export function ResetPasswordPage() {
   const [message, setMessage] = useState({ text: '', type: '' })
 
   if (authLoading) {
-    return (
-      <div className="loading-screen">
-        <div className="loader-pulse"></div>
-        <p>Checking reset link...</p>
-      </div>
-    )
+    return <LoadingScreen text="Checking reset link..." />
   }
 
   if (!user) {

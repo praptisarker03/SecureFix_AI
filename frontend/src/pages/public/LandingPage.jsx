@@ -264,7 +264,7 @@ export function LandingPage() {
           <Reveal as="p" delay={60}>Upload a .zip and get verified fixes, or try a quick check in your browser first.</Reveal>
           <Reveal delay={120} className="hero-actions center">
             <Link to="/signup" className="btn btn-primary btn-lg">Create account</Link>
-            <Link to="/services" className="btn btn-outline-light btn-lg">View services</Link>
+            <Link to="/how-it-works" className="btn btn-outline-light btn-lg">How it works</Link>
           </Reveal>
         </div>
       </section>

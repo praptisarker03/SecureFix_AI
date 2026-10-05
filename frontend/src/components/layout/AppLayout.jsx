@@ -3,22 +3,23 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-do
 import { useAuth } from '../../context/AuthContext'
 import { Icon, Logo } from '../ui/Icons'
 
-/* Signed-in app shell: sidebar + top bar */
+/* Signed-in app shell: sidebar + top bar.
+   Items marked `soon` are shown in the menu but not built yet. */
 
 const NAV = [
   { section: 'Overview', items: [
     { to: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
-    { to: '/projects', label: 'Projects', icon: 'folder' },
+    { to: '/projects', soon: true, label: 'Projects', icon: 'folder' },
     { to: '/scans/new', label: 'New scan', icon: 'upload' },
   ] },
   { section: 'Remediation', items: [
-    { to: '/findings', label: 'Findings', icon: 'bug' },
-    { to: '/verifications', label: 'Verification', icon: 'checkCircle' },
+    { to: '/findings', soon: true, label: 'Findings', icon: 'bug' },
+    { to: '/verifications', soon: true, label: 'Verification', icon: 'checkCircle' },
   ] },
   { section: 'Reports', items: [
-    { to: '/report', label: 'Security report', icon: 'report' },
-    { to: '/history', label: 'History & compare', icon: 'history' },
-    { to: '/evaluation', label: 'Evaluation', icon: 'flask' },
+    { to: '/report', soon: true, label: 'Security report', icon: 'report' },
+    { to: '/history', soon: true, label: 'History & compare', icon: 'history' },
+    { to: '/evaluation', soon: true, label: 'Evaluation', icon: 'flask' },
   ] },
 ]
 
@@ -58,12 +59,20 @@ export function AppLayout() {
           {NAV.map((group) => (
             <div key={group.section} className="nav-group">
               <div className="nav-section">{group.section}</div>
-              {group.items.map((item) => (
-                <NavLink key={item.to} to={item.to} end={item.to === '/dashboard'} className="nav-item">
-                  <Icon name={item.icon} size={18} />
-                  {item.label}
-                </NavLink>
-              ))}
+              {group.items.map((item) =>
+                item.soon ? (
+                  <span key={item.to} className="nav-item nav-item-soon" aria-disabled="true">
+                    <Icon name={item.icon} size={18} />
+                    {item.label}
+                    <span className="soon-tag">Soon</span>
+                  </span>
+                ) : (
+                  <NavLink key={item.to} to={item.to} end={item.to === '/dashboard'} className="nav-item">
+                    <Icon name={item.icon} size={18} />
+                    {item.label}
+                  </NavLink>
+                )
+              )}
             </div>
           ))}
           <div className="nav-group">
@@ -91,12 +100,7 @@ export function AppLayout() {
           </button>
           <div className="topbar-search">
             <Icon name="search" size={16} />
-            <input
-              placeholder="Search findings, CWE, files…"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') navigate(`/findings?q=${encodeURIComponent(e.currentTarget.value)}`)
-              }}
-            />
+            <input placeholder="Search findings (coming soon)" disabled />
           </div>
           <Link to="/" className="topbar-link"><Icon name="home" size={16} /> Back to website</Link>
         </header>

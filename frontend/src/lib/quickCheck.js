@@ -1,7 +1,7 @@
 import { SEVERITIES } from './constants'
 
 // Browser-only pattern check used by the Quick Code Check demo on the
-// Services page. It is a tiny stand-in for the real Semgrep pipeline:
+// landing page. It is a tiny stand-in for the real Semgrep pipeline:
 // line-based regexes, no parsing, so expect false positives and misses.
 
 const SQL_KEYWORD = /\b(select|insert|update|delete)\b[\s\S]*\b(from|into|set|where)\b/i

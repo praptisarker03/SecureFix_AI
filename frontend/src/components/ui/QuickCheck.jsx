@@ -3,7 +3,7 @@ import { Icon } from './Icons'
 import { SeverityBadge, SeverityCounts } from './Elements'
 import { runQuickCheck, SAMPLE_CODE } from '../../lib/quickCheck'
 
-// Paste-and-check demo, used on the landing and services pages
+// Paste-and-check demo on the landing page
 export function QuickCheck() {
   const [code, setCode] = useState('')
   const [results, setResults] = useState(null)

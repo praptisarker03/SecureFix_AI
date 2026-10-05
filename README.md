@@ -86,9 +86,8 @@ SecureFix_Ai/
 │       │   │   └── ConfigBanner.jsx   Warning when Supabase .env is missing
 │       │   ├── ui/
 │       │   │   ├── Icons.jsx      Icon set + SecureFix logo
-│       │   │   ├── Elements.jsx   Badges, Card, PageHeader, StatTile, EmptyState, …
-│       │   │   ├── Charts.jsx     SVG charts: severity trend, bars, donut
-│       │   │   ├── DiffView.jsx   Side-by-side before/after code diff
+│       │   │   ├── Elements.jsx   Badges, Card, PageHeader, EmptyState, LoadingScreen, …
+│       │   │   ├── QuickCheck.jsx In-browser "paste code and check" demo
 │       │   │   ├── Faq.jsx        Expandable FAQ list
 │       │   │   └── Reveal.jsx     Fade-in-on-scroll wrapper
 │       │   └── illustrations/
@@ -96,11 +95,9 @@ SecureFix_Ai/
 │       │       └── LoopDiagram.jsx Login page: animated Detect → Fix → Verify ring
 │       │
 │       └── pages/
-│           ├── public/            Landing, How it works (docs), Services
+│           ├── public/            Landing, How it works (docs)
 │           ├── auth/              Login/Signup/Forgot, Reset password, Verify email, Unauthorized
-│           ├── app/               Dashboard, Projects, New scan, Scan progress, Findings,
-│           │                      Finding detail, Verification, Report, History, Evaluation,
-│           │                      Settings, Admin
+│           ├── app/               Dashboard, New scan, Scan progress, Settings, Admin
 │           └── NotFoundPage.jsx   404
 │
 ├── backend/                      FastAPI app
@@ -128,20 +125,18 @@ SecureFix_Ai/
 
 | Area | Route | Page |
 |---|---|---|
-| Public | `/` | Landing |
+| Public | `/` | Landing (includes the in-browser quick code check) |
 | | `/how-it-works` | Workflow, languages, verification logic, FAQ |
-| | `/services` | All services, Quick code check (in-browser demo), supported languages |
-| | `/evaluation-results` | Public benchmark results |
 | Auth | `/login`, `/signup`, `/forgot-password` | Email + Google sign in |
 | | `/reset-password`, `/verify-email`, `/unauthorized` | Account flows |
-| App | `/dashboard` | KPIs, trend, recent scans (onboarding when empty) |
-| | `/projects` | Project cards / table |
+| App | `/dashboard` | Greeting, stats, recent scans |
 | | `/scans/new` | Upload .zip, language, privacy notice |
 | | `/scans/:id/progress` | Extract → Semgrep → AI → Verify tracker |
-| | `/findings`, `/findings/:id` | List with filters; detail with AI fix diff |
-| | `/findings/:id/verification`, `/verifications` | Three-check verification result |
-| | `/report`, `/history`, `/evaluation` | Report + PDF, scan compare, thesis evaluation |
-| | `/settings`, `/admin` | Profile, usage, integrations, false-positive rules; admin |
+| | `/settings` | Profile + change password |
+| | `/admin` | Admin-only backend check |
+
+**Planned (shown in the menus as "Soon", no page yet):** Services, Results (public);
+Projects, Findings, Verification, Security report, History & compare, Evaluation (app).
 
 ---
 

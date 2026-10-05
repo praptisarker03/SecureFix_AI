@@ -22,7 +22,7 @@ const FAQ = [
   ['What is sent to Gemini?', 'Only the lines around each finding (about ±20 lines) plus the rule message. Whole files and the full repository are never sent. You confirm this on the upload screen.'],
   ['Does "verified" mean the code is secure?', 'No. It means the three automated checks passed for that finding. Static analysis cannot prove the absence of vulnerabilities, and business-logic bugs are out of scope.'],
   ['Why would a fix fail verification?', 'The AI may patch the wrong line, introduce a new pattern Semgrep flags, or produce code that does not compile. Failed fixes are shown with the reason so you can retry or edit them.'],
-  ['Can I mark false positives?', 'Yes. Mark a finding as a false positive, or add a rule in Settings to ignore a path or rule ID in future scans.'],
+  ['Can I mark false positives?', 'Not yet. Marking false positives and ignoring paths or rules is planned for a later version.'],
 ]
 
 export function HowItWorksPage() {

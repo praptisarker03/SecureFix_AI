@@ -1,4 +1,5 @@
 import { Navigate, useLocation } from 'react-router-dom'
+import { LoadingScreen } from '../ui/Elements'
 import { useAuth } from '../../context/AuthContext'
 
 // Guards a route in three steps:
@@ -12,12 +13,7 @@ export function ProtectedRoute({ children, roles }) {
   const location = useLocation()
 
   if (loading) {
-    return (
-      <div className="loading-screen" id="protected-route-loader">
-        <div className="loader-pulse"></div>
-        <p>Verifying secure session...</p>
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   if (!user) {

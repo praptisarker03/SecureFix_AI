@@ -3,7 +3,8 @@ import { Link, Outlet } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { Icon, Logo } from '../ui/Icons'
 
-/* Public site (landing, docs, services): top nav + footer */
+/* Public site (landing, docs): top nav + footer.
+   Links without `to` are planned pages, shown as "Soon". */
 
 function PublicNav() {
   const { user } = useAuth()
@@ -11,8 +12,8 @@ function PublicNav() {
   const links = [
     { to: '/#features', label: 'Platform' },
     { to: '/how-it-works', label: 'How it works' },
-    { to: '/services', label: 'Services' },
-    { to: '/evaluation-results', label: 'Results' },
+    { label: 'Services' },
+    { label: 'Results' },
   ]
   return (
     <header className="pub-nav">
@@ -21,11 +22,17 @@ function PublicNav() {
           <Logo light />
         </Link>
         <nav className={`pub-links ${open ? 'open' : ''}`}>
-          {links.map((l) => (
-            <Link key={l.to} to={l.to} onClick={() => setOpen(false)}>
-              {l.label}
-            </Link>
-          ))}
+          {links.map((l) =>
+            l.to ? (
+              <Link key={l.label} to={l.to} onClick={() => setOpen(false)}>
+                {l.label}
+              </Link>
+            ) : (
+              <span key={l.label} className="pub-soon" aria-disabled="true">
+                {l.label} <small>Soon</small>
+              </span>
+            )
+          )}
           <div className="pub-cta-mobile">
             {user ? (
               <Link to="/dashboard" className="btn btn-primary">Go to dashboard</Link>
@@ -57,7 +64,7 @@ function PublicNav() {
 
 function PublicFooter() {
   const cols = [
-    { title: 'Product', links: [['/how-it-works', 'How it works'], ['/services', 'Services'], ['/#try-it', 'Try before sign up'], ['/evaluation-results', 'Evaluation'], ['/signup', 'Get started']] },
+    { title: 'Product', links: [['/how-it-works', 'How it works'], [null, 'Services'], ['/#try-it', 'Try before sign up'], [null, 'Evaluation'], ['/signup', 'Get started']] },
     { title: 'Resources', links: [['/how-it-works#languages', 'Supported languages'], ['/how-it-works#verification', 'Verification logic'], ['/how-it-works#privacy', 'Data & privacy'], ['/how-it-works#faq', 'FAQ']] },
     { title: 'Standards', links: [['/how-it-works#standards', 'OWASP Top 10'], ['/how-it-works#standards', 'CWE mapping'], ['/how-it-works#pipeline', 'Semgrep rules'], ['/how-it-works#pipeline', 'Gemini prompts']] },
   ]
@@ -71,9 +78,9 @@ function PublicFooter() {
         {cols.map((c) => (
           <div key={c.title} className="pub-footer-col">
             <h4>{c.title}</h4>
-            {c.links.map(([to, label]) => (
-              <Link key={label} to={to}>{label}</Link>
-            ))}
+            {c.links.map(([to, label]) =>
+              to ? <Link key={label} to={to}>{label}</Link> : <span key={label} className="pub-soon">{label} <small>Soon</small></span>
+            )}
           </div>
         ))}
       </div>

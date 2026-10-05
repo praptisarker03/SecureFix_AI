@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useData } from '../../context/DataContext'
 import { Icon } from '../../components/ui/Icons'
 import { Card, PageHeader } from '../../components/ui/Elements'
@@ -10,16 +10,14 @@ const MAX_MB = 50
 const LANG_BADGE = { python: 'Py', javascript: 'JS', typescript: 'TS', php: 'PHP', java: 'Java' }
 
 export function NewScanPage() {
-  const { startScan, getProject } = useData()
+  const { startScan } = useData()
   const navigate = useNavigate()
-  const [params] = useSearchParams()
-  const existing = getProject(params.get('project'))
   const inputRef = useRef(null)
 
   const [file, setFile] = useState(null)
   const [dragging, setDragging] = useState(false)
-  const [language, setLanguage] = useState(existing?.language || 'python')
-  const [projectName, setProjectName] = useState(existing?.name || '')
+  const [language, setLanguage] = useState('python')
+  const [projectName, setProjectName] = useState('')
   const [consent, setConsent] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -81,7 +79,7 @@ export function NewScanPage() {
     <>
       <PageHeader
         eyebrow="New scan"
-        title={existing ? `Re-scan ${existing.name}` : 'Upload code to scan'}
+        title="Upload code to scan"
         subtitle="Upload a .zip of your source code. Scans usually take 1 to 4 minutes."
       />
 

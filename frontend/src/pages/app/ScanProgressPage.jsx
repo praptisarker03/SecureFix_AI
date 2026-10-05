@@ -21,7 +21,7 @@ export function ScanProgressPage() {
   if (!scan) {
     return (
       <>
-        <PageHeader title="Scan progress" back={{ to: '/projects', label: 'Projects' }} />
+        <PageHeader title="Scan progress" back={{ to: '/dashboard', label: 'Dashboard' }} />
         <Card>
           <EmptyState icon="scan" title="Scan not found" action={<Link to="/scans/new" className="btn btn-primary">Start a new scan</Link>}>
             This scan does not exist, or scanning is not connected yet.
@@ -43,7 +43,7 @@ export function ScanProgressPage() {
         eyebrow={`Scan ${scan.id}`}
         title={done ? 'Scan complete' : failed ? 'Scan failed' : 'Scanning your code…'}
         subtitle={project ? `${project.name} · ${project.source}` : ''}
-        back={{ to: '/projects', label: 'Projects' }}
+        back={{ to: '/dashboard', label: 'Dashboard' }}
       />
       <Card>
         <div className="progress-head">
@@ -78,10 +78,7 @@ export function ScanProgressPage() {
             <div className="result-box">
               <Icon name="checkCircle" size={36} className="tone-good" />
               <SeverityCounts counts={scan.counts} />
-              <div className="row-gap">
-                <Link to={`/findings?project=${scan.projectId}`} className="btn btn-primary">Review findings</Link>
-                <Link to={`/report?scan=${scan.id}`} className="btn btn-outline">View report</Link>
-              </div>
+              <Link to="/dashboard" className="btn btn-primary">Back to dashboard</Link>
             </div>
           ) : (
             <p className="muted">{failed ? scan.error || 'The scan stopped with an error.' : 'Results appear here when the scan finishes.'}</p>

@@ -2,13 +2,6 @@ import { Link } from 'react-router-dom'
 import { Icon } from './Icons'
 import { SEVERITIES, SEVERITY_LABEL } from '../../lib/constants'
 
-const STATUS_META = {
-  open: { label: 'Open', icon: 'alert' },
-  fixed: { label: 'Fix applied', icon: 'sparkles' },
-  verified: { label: 'Verified', icon: 'checkCircle' },
-  false_positive: { label: 'False positive', icon: 'x' },
-}
-
 // Severity always shows a letter + label, never color alone
 export function SeverityBadge({ severity, compact = false }) {
   return (
@@ -28,16 +21,6 @@ export function SeverityCounts({ counts }) {
           {counts?.[s] || 0}
         </span>
       ))}
-    </span>
-  )
-}
-
-export function StatusBadge({ status }) {
-  const meta = STATUS_META[status] || { label: status, icon: 'info' }
-  return (
-    <span className={`status status-${status}`}>
-      <Icon name={meta.icon} size={13} strokeWidth={2.2} />
-      {meta.label}
     </span>
   )
 }
@@ -74,19 +57,6 @@ export function Card({ title, action, children, className = '', pad = true }) {
   )
 }
 
-export function StatTile({ label, value, sub, tone, icon }) {
-  return (
-    <div className="stat-tile">
-      <div className="stat-label">
-        {icon && <span className="stat-icon"><Icon name={icon} size={15} /></span>}
-        {label}
-      </div>
-      <div className={`stat-value ${tone ? `tone-${tone}` : ''}`}>{value}</div>
-      {sub && <div className="stat-sub">{sub}</div>}
-    </div>
-  )
-}
-
 export function EmptyState({ icon = 'folder', title, children, action }) {
   return (
     <div className="empty-state">
@@ -100,19 +70,6 @@ export function EmptyState({ icon = 'folder', title, children, action }) {
   )
 }
 
-export function HealthScore({ value }) {
-  if (value == null) return <span className="muted">Scanning…</span>
-  const tone = value >= 85 ? 'good' : value >= 65 ? 'warn' : 'bad'
-  return (
-    <span className={`health health-${tone}`}>
-      <span className="health-bar">
-        <span style={{ width: `${value}%` }} />
-      </span>
-      <strong>{value}</strong>
-    </span>
-  )
-}
-
 export function ProgressBar({ value, tone = 'brand' }) {
   return (
     <div className={`progress progress-${tone}`} role="progressbar" aria-valuenow={Math.round(value)} aria-valuemin={0} aria-valuemax={100}>
@@ -121,17 +78,11 @@ export function ProgressBar({ value, tone = 'brand' }) {
   )
 }
 
-export function Confidence({ value }) {
-  const pct = Math.round(value * 100)
-  const label = pct >= 85 ? 'High' : pct >= 60 ? 'Medium' : 'Low'
+export function LoadingScreen({ text = 'Verifying secure session...' }) {
   return (
-    <span className="confidence" title={`AI confidence ${pct}%`}>
-      <span className="confidence-dots">
-        {[0.33, 0.66, 0.9].map((t) => (
-          <span key={t} className={value >= t ? 'on' : ''} />
-        ))}
-      </span>
-      {label} · {pct}%
-    </span>
+    <div className="loading-screen">
+      <div className="loader-pulse" />
+      <p>{text}</p>
+    </div>
   )
 }

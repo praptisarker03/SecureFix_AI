@@ -13,16 +13,6 @@ export function totalCount(counts) {
   return SEVERITIES.reduce((sum, s) => sum + (counts?.[s] || 0), 0)
 }
 
-export function formatDate(iso, withTime = false) {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    ...(withTime ? { hour: '2-digit', minute: '2-digit' } : {}),
-  })
-}
-
 export function timeAgo(iso) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000
   if (diff < 60) return 'just now'

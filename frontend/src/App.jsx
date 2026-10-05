@@ -8,7 +8,6 @@ import { AuthLayout } from './components/layout/AuthLayout'
 import { AppLayout } from './components/layout/AppLayout'
 import { LandingPage } from './pages/public/LandingPage'
 import { HowItWorksPage } from './pages/public/HowItWorksPage'
-import { ServicesPage } from './pages/public/ServicesPage'
 import { AuthPage } from './pages/auth/AuthPage'
 import { ResetPasswordPage } from './pages/auth/ResetPasswordPage'
 import { VerifyEmailPage } from './pages/auth/VerifyEmailPage'
@@ -16,15 +15,8 @@ import { UnauthorizedPage } from './pages/auth/UnauthorizedPage'
 import { DashboardPage } from './pages/app/DashboardPage'
 import { AdminPage } from './pages/app/AdminPage'
 import { NotFoundPage } from './pages/NotFoundPage'
-import { ProjectsPage } from './pages/app/ProjectsPage'
 import { NewScanPage } from './pages/app/NewScanPage'
 import { ScanProgressPage } from './pages/app/ScanProgressPage'
-import { FindingsPage } from './pages/app/FindingsPage'
-import { FindingDetailPage } from './pages/app/FindingDetailPage'
-import { VerificationPage, VerificationsListPage } from './pages/app/VerificationPage'
-import { ReportPage } from './pages/app/ReportPage'
-import { HistoryPage } from './pages/app/HistoryPage'
-import { EvaluationPage, PublicEvaluationPage } from './pages/app/EvaluationPage'
 import { SettingsPage } from './pages/app/SettingsPage'
 import './styles/app.css'
 
@@ -51,9 +43,6 @@ function AppRoutes() {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/how-it-works" element={<HowItWorksPage />} />
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="/pricing" element={<Navigate to="/services" replace />} />
-        <Route path="/evaluation-results" element={<PublicEvaluationPage />} />
       </Route>
 
       {/* Auth: split layout */}
@@ -77,16 +66,8 @@ function AppRoutes() {
         }
       >
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/scans/new" element={<NewScanPage />} />
         <Route path="/scans/:scanId/progress" element={<ScanProgressPage />} />
-        <Route path="/findings" element={<FindingsPage />} />
-        <Route path="/findings/:id" element={<FindingDetailPage />} />
-        <Route path="/findings/:id/verification" element={<VerificationPage />} />
-        <Route path="/verifications" element={<VerificationsListPage />} />
-        <Route path="/report" element={<ReportPage />} />
-        <Route path="/history" element={<HistoryPage />} />
-        <Route path="/evaluation" element={<EvaluationPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route
           path="/admin"
