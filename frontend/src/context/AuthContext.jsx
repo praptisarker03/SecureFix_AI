@@ -71,7 +71,7 @@ export function AuthProvider({ children }) {
         data: {
           full_name: fullName?.trim() || '',
         },
-        emailRedirectTo: redirectUrl('/dashboard'),
+        emailRedirectTo: redirectUrl('/auth/callback'),
       },
     })
     if (error) throw error
@@ -83,7 +83,7 @@ export function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: redirectUrl('/dashboard'),
+        redirectTo: redirectUrl('/auth/callback'),
       },
     })
     if (error) throw error
@@ -95,7 +95,7 @@ export function AuthProvider({ children }) {
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email: email.trim(),
-      options: { emailRedirectTo: redirectUrl('/dashboard') },
+      options: { emailRedirectTo: redirectUrl('/auth/callback') },
     })
     if (error) throw error
   }

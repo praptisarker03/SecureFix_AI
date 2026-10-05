@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext'
 import { Icon, Logo } from '../ui/Icons'
 
 /* Public site (landing, docs): top nav + footer.
-   Links without `to` are planned pages, shown as "Soon". */
+   Links without `to` are planned pages, shown greyed out. */
 
 function PublicNav() {
   const { user } = useAuth()
@@ -29,7 +29,7 @@ function PublicNav() {
               </Link>
             ) : (
               <span key={l.label} className="pub-soon" aria-disabled="true">
-                {l.label} <small>Soon</small>
+                {l.label}
               </span>
             )
           )}
@@ -79,13 +79,13 @@ function PublicFooter() {
           <div key={c.title} className="pub-footer-col">
             <h4>{c.title}</h4>
             {c.links.map(([to, label]) =>
-              to ? <Link key={label} to={to}>{label}</Link> : <span key={label} className="pub-soon">{label} <small>Soon</small></span>
+              to ? <Link key={label} to={to}>{label}</Link> : <span key={label} className="pub-soon">{label}</span>
             )}
           </div>
         ))}
       </div>
       <div className="pub-footer-bottom">
-        <span>© {new Date().getFullYear()} SecureFix AI · Final year thesis project</span>
+        <span>© {new Date().getFullYear()} SecureFix AI</span>
         <span>Built with React, FastAPI, Semgrep & Gemini</span>
       </div>
     </footer>

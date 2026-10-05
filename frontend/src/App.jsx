@@ -11,6 +11,7 @@ import { HowItWorksPage } from './pages/public/HowItWorksPage'
 import { AuthPage } from './pages/auth/AuthPage'
 import { ResetPasswordPage } from './pages/auth/ResetPasswordPage'
 import { VerifyEmailPage } from './pages/auth/VerifyEmailPage'
+import { AuthCallbackPage } from './pages/auth/AuthCallbackPage'
 import { UnauthorizedPage } from './pages/auth/UnauthorizedPage'
 import { DashboardPage } from './pages/app/DashboardPage'
 import { AdminPage } from './pages/app/AdminPage'
@@ -54,6 +55,8 @@ function AppRoutes() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         {/* Signed in, but email not confirmed yet */}
         <Route path="/verify-email" element={<VerifyEmailPage />} />
+        {/* Opened from the signup confirmation email and after Google sign-in */}
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
       </Route>
 

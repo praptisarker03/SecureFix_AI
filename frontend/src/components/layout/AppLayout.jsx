@@ -64,7 +64,6 @@ export function AppLayout() {
                   <span key={item.to} className="nav-item nav-item-soon" aria-disabled="true">
                     <Icon name={item.icon} size={18} />
                     {item.label}
-                    <span className="soon-tag">Soon</span>
                   </span>
                 ) : (
                   <NavLink key={item.to} to={item.to} end={item.to === '/dashboard'} className="nav-item">
@@ -100,9 +99,9 @@ export function AppLayout() {
           </button>
           <div className="topbar-search">
             <Icon name="search" size={16} />
-            <input placeholder="Search findings (coming soon)" disabled />
+            <input placeholder="Search findings" disabled />
           </div>
-          <Link to="/" className="topbar-link"><Icon name="home" size={16} /> Back to website</Link>
+          <Link to="/" className="topbar-link"><Icon name="home" size={16} /> Back to the homepage</Link>
         </header>
         {/* key restarts the enter animation on every route change */}
         <main className="app-content" key={location.pathname}>
