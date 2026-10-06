@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { LoadingScreen } from '../../components/ui/Elements'
 import { useAuth } from '../../context/AuthContext'
 import { PasswordStrength } from '../../components/auth/PasswordStrength'
+import { PasswordInput } from '../../components/auth/PasswordInput'
 import { validatePassword } from '../../lib/passwordPolicy'
 
 // Opened from the password-reset email. Supabase signs the user in from the
@@ -74,9 +75,8 @@ export function ResetPasswordPage() {
       <form onSubmit={handleSubmit} className="auth-form">
         <div className="form-group">
           <label htmlFor="input-new-password">New Password</label>
-          <input
+          <PasswordInput
             id="input-new-password"
-            type="password"
             placeholder="••••••••••••"
             autoComplete="new-password"
             value={password}
@@ -88,9 +88,8 @@ export function ResetPasswordPage() {
 
         <div className="form-group">
           <label htmlFor="input-confirm-new-password">Confirm New Password</label>
-          <input
+          <PasswordInput
             id="input-confirm-new-password"
-            type="password"
             placeholder="••••••••••••"
             autoComplete="new-password"
             value={confirmPassword}

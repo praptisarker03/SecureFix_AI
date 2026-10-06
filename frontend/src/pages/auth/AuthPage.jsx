@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { PasswordStrength } from '../../components/auth/PasswordStrength'
+import { PasswordInput } from '../../components/auth/PasswordInput'
 import { Icon } from '../../components/ui/Icons'
 import { validatePassword } from '../../lib/passwordPolicy'
 
@@ -294,9 +295,8 @@ export function AuthPage({ mode = 'login' }) {
                 </button>
               )}
             </div>
-            <input
+            <PasswordInput
               id="input-password"
-              type="password"
               placeholder="••••••••••••"
               autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
               value={password}
@@ -310,9 +310,8 @@ export function AuthPage({ mode = 'login' }) {
         {mode === 'signup' && (
           <div className="form-group">
             <label htmlFor="input-confirm-password">Confirm Password</label>
-            <input
+            <PasswordInput
               id="input-confirm-password"
-              type="password"
               placeholder="••••••••••••"
               autoComplete="new-password"
               value={confirmPassword}

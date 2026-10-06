@@ -3,19 +3,14 @@ import { useAuth } from '../../context/AuthContext'
 import { Icon } from '../../components/ui/Icons'
 import { Card, PageHeader } from '../../components/ui/Elements'
 import { PasswordStrength } from '../../components/auth/PasswordStrength'
+import { PasswordInput } from '../../components/auth/PasswordInput'
 import { validatePassword } from '../../lib/passwordPolicy'
 
 function PasswordField({ id, label, value, onChange, autoComplete, children }) {
-  const [show, setShow] = useState(false)
   return (
     <div className="form-row">
       <label htmlFor={id}>{label}</label>
-      <div className="pw-input">
-        <input id={id} type={show ? 'text' : 'password'} autoComplete={autoComplete} value={value} onChange={(e) => onChange(e.target.value)} required />
-        <button type="button" className="pw-toggle" onClick={() => setShow((v) => !v)} aria-label={show ? 'Hide password' : 'Show password'}>
-          <Icon name={show ? 'x' : 'eye'} size={16} />
-        </button>
-      </div>
+      <PasswordInput id={id} autoComplete={autoComplete} value={value} onChange={(e) => onChange(e.target.value)} required />
       {children}
     </div>
   )
