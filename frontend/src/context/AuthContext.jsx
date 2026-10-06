@@ -3,8 +3,8 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase'
 
 const AuthContext = createContext(null)
 
-// Role lives in app_metadata, which only the server / service role can change.
-// Never read it from user_metadata - users can edit that themselves.
+// The role comes from app_metadata, which only the server can change.
+// user_metadata is editable by the user, so it is never trusted for roles.
 function getUserRole(user) {
   return user?.app_metadata?.role || 'user'
 }
@@ -15,7 +15,6 @@ function isEmailVerified(user) {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [session, setSession] = useState(null)
   // Nothing to load when Supabase is not configured
   const [loading, setLoading] = useState(isSupabaseConfigured)
   const [isPasswordRecovery, setIsPasswordRecovery] = useState(false)
@@ -23,9 +22,8 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (!isSupabaseConfigured) return
 
-    // 1. Session Persistence: Check active session on initial load
+    // Restore the saved session when the page loads
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
     }).catch((err) => {
@@ -33,13 +31,12 @@ export function AuthProvider({ children }) {
       setLoading(false)
     })
 
-    // 2. Real-time auth state updates (e.g. login, logout, token refresh, password recovery)
+    // Keep the user in sync on login, logout, token refresh and password reset
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') setIsPasswordRecovery(true)
       if (event === 'SIGNED_OUT') setIsPasswordRecovery(false)
-      setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
     })
@@ -52,7 +49,6 @@ export function AuthProvider({ children }) {
   // Includes the base path so links in emails work when hosted under /<repo>/
   const redirectUrl = (path) => `${window.location.origin}${import.meta.env.BASE_URL.replace(/\/$/, '')}${path}`
 
-  // Sign In with email and password
   const signIn = async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
@@ -62,7 +58,6 @@ export function AuthProvider({ children }) {
     return data
   }
 
-  // Sign Up with email, password, and user metadata
   const signUp = async (email, password, fullName) => {
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
@@ -78,7 +73,6 @@ export function AuthProvider({ children }) {
     return data
   }
 
-  // Google OAuth Login
   const signInWithGoogle = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -90,7 +84,6 @@ export function AuthProvider({ children }) {
     return data
   }
 
-  // Re-send the signup confirmation email
   const resendVerification = async (email) => {
     const { error } = await supabase.auth.resend({
       type: 'signup',
@@ -100,7 +93,6 @@ export function AuthProvider({ children }) {
     if (error) throw error
   }
 
-  // Send a password reset link; the link opens /reset-password
   const resetPassword = async (email) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
       redirectTo: redirectUrl('/reset-password'),
@@ -108,7 +100,6 @@ export function AuthProvider({ children }) {
     if (error) throw error
   }
 
-  // Set a new password for the signed-in (or recovering) user
   const updatePassword = async (newPassword) => {
     const { data, error } = await supabase.auth.updateUser({ password: newPassword })
     if (error) throw error
@@ -116,16 +107,14 @@ export function AuthProvider({ children }) {
     return data
   }
 
-  // Fetch a fresh session so changes like email confirmation show up
+  // Fetch a fresh session so a just-confirmed email shows up
   const refreshUser = async () => {
     const { data, error } = await supabase.auth.refreshSession()
     if (error) throw error
-    setSession(data.session)
     setUser(data.user ?? null)
     return data.user
   }
 
-  // Sign Out / Logout
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut()
@@ -133,14 +122,12 @@ export function AuthProvider({ children }) {
     } finally {
       // Clear local state even if the server call failed (e.g. expired session)
       setUser(null)
-      setSession(null)
       setIsPasswordRecovery(false)
     }
   }
 
   const value = {
     user,
-    session,
     loading,
     role: getUserRole(user),
     emailVerified: isEmailVerified(user),

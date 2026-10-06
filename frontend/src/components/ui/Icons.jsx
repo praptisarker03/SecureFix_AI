@@ -54,9 +54,8 @@ export function Icon({ name, size = 18, className = '', strokeWidth = 1.8, ...re
   )
 }
 
-// Shield with a closed-loop arrow inside: detect → fix → verify, repeated.
-// Keep in sync with public/favicon.svg.
-export function LogoMark({ size = 28 }) {
+// Same shape as public/favicon.svg
+function LogoMark({ size = 28 }) {
   return (
     <svg className="logo-mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
       <path className="logo-shield" d="M16 2.5 27 6.6v8.6c0 6.7-4.5 11.8-11 14.3C9.5 27 5 21.9 5 15.2V6.6z" />

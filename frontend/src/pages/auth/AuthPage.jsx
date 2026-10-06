@@ -16,6 +16,24 @@ function isEmailNotConfirmedError(err) {
 
 const MODE_PATHS = { login: '/login', signup: '/signup', forgot: '/forgot-password' }
 
+const MODE_TEXT = {
+  login: {
+    title: 'Welcome back',
+    subtitle: 'Log in to review findings and verify AI fixes.',
+    submit: 'Log in',
+  },
+  signup: {
+    title: 'Create your free account',
+    subtitle: 'Scan your first project in under a minute. No credit card needed.',
+    submit: 'Create account',
+  },
+  forgot: {
+    title: 'Forgot your password?',
+    subtitle: 'No worries. Enter the email you signed up with and we will send you a link to set a new password.',
+    submit: 'Send reset link',
+  },
+}
+
 export function AuthPage({ mode = 'login' }) {
   const {
     user,
@@ -40,14 +58,15 @@ export function AuthPage({ mode = 'login' }) {
   // Email that still needs confirming; shows the "resend" button when set
   const [pendingVerificationEmail, setPendingVerificationEmail] = useState('')
 
-  // If already authenticated and not loading, redirect to where the user was going
   if (!authLoading && user) {
     return <Navigate to={redirectTo} replace />
   }
 
+  const clearMessage = () => setMessage({ text: '', type: '' })
+
   const switchMode = (nextMode) => {
     navigate(MODE_PATHS[nextMode], { state: location.state })
-    setMessage({ text: '', type: '' })
+    clearMessage()
     setPendingVerificationEmail('')
     setPassword('')
     setConfirmPassword('')
@@ -63,7 +82,7 @@ export function AuthPage({ mode = 'login' }) {
     if (!checkConfigured()) return
 
     setLoading(true)
-    setMessage({ text: '', type: '' })
+    clearMessage()
     setPendingVerificationEmail('')
 
     try {
@@ -97,7 +116,7 @@ export function AuthPage({ mode = 'login' }) {
     }
 
     setLoading(true)
-    setMessage({ text: '', type: '' })
+    clearMessage()
 
     try {
       const data = await signUp(email, password, fullName)
@@ -124,7 +143,7 @@ export function AuthPage({ mode = 'login' }) {
     if (!checkConfigured()) return
 
     setLoading(true)
-    setMessage({ text: '', type: '' })
+    clearMessage()
 
     try {
       await resetPassword(email)
@@ -169,33 +188,19 @@ export function AuthPage({ mode = 'login' }) {
     forgot: handleForgotPassword,
   }[mode]
 
-  const headings = {
-    login: 'Welcome back',
-    signup: 'Create your free account',
-    forgot: 'Forgot your password?',
-  }
-
   return (
-    <div className="auth-card" id="auth-box">
+    <div className="auth-card">
       <div className="auth-header">
         {mode === 'forgot' && (
           <span className="auth-badge"><Icon name="key" size={22} /></span>
         )}
-        <h2>{headings[mode]}</h2>
-        <p>
-          {mode === 'forgot'
-            ? 'No worries. Enter the email you signed up with and we will send you a link to set a new password.'
-            : mode === 'login'
-              ? 'Log in to review findings and verify AI fixes.'
-              : 'Scan your first project in under a minute. No credit card needed.'}
-        </p>
+        <h2>{MODE_TEXT[mode].title}</h2>
+        <p>{MODE_TEXT[mode].subtitle}</p>
       </div>
 
-      {/* Mode Toggle Tabs */}
       {mode !== 'forgot' && (
         <div className="tab-container" role="tablist">
           <button
-            id="tab-login"
             role="tab"
             aria-selected={mode === 'login'}
             className={`tab-btn ${mode === 'login' ? 'active' : ''}`}
@@ -204,7 +209,6 @@ export function AuthPage({ mode = 'login' }) {
             Sign In
           </button>
           <button
-            id="tab-signup"
             role="tab"
             aria-selected={mode === 'signup'}
             className={`tab-btn ${mode === 'signup' ? 'active' : ''}`}
@@ -215,15 +219,13 @@ export function AuthPage({ mode = 'login' }) {
         </div>
       )}
 
-      {/* Notification Message */}
       {message.text && !(mode === 'forgot' && message.type === 'success') && (
-        <div className={`alert-message alert-${message.type}`} id="status-message">
+        <div className={`alert-message alert-${message.type}`}>
           {message.text}
           {pendingVerificationEmail && (
             <button
               type="button"
               className="link-btn"
-              id="btn-resend-verification"
               onClick={handleResendVerification}
               disabled={loading}
             >
@@ -244,7 +246,7 @@ export function AuthPage({ mode = 'login' }) {
             <li>Click the reset link</li>
             <li>Choose a new password</li>
           </ol>
-          <button type="button" className="btn btn-outline btn-block" onClick={() => setMessage({ text: '', type: '' })}>
+          <button type="button" className="btn btn-outline btn-block" onClick={clearMessage}>
             Use a different email
           </button>
         </div>
@@ -286,7 +288,6 @@ export function AuthPage({ mode = 'login' }) {
                 <button
                   type="button"
                   className="link-btn link-btn-small"
-                  id="btn-forgot-password"
                   onClick={() => switchMode('forgot')}
                 >
                   Forgot password?
@@ -323,19 +324,10 @@ export function AuthPage({ mode = 'login' }) {
 
         <button
           type="submit"
-          id="btn-auth-submit"
           className="btn-primary btn-block"
           disabled={loading}
         >
-          {loading ? (
-            <span className="spinner-text">Processing...</span>
-          ) : mode === 'login' ? (
-            'Log in'
-          ) : mode === 'signup' ? (
-            'Create account'
-          ) : (
-            'Send reset link'
-          )}
+          {loading ? <span className="spinner-text">Processing...</span> : MODE_TEXT[mode].submit}
         </button>
       </form>
       )}
@@ -348,7 +340,6 @@ export function AuthPage({ mode = 'login' }) {
 
           <button
             type="button"
-            id="btn-google-login"
             className="btn-oauth btn-block"
             onClick={handleOAuth}
             disabled={loading}

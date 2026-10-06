@@ -7,7 +7,7 @@ export function PasswordStrength({ password }) {
   const checks = getPasswordChecks(password)
 
   return (
-    <div className="password-strength" id="password-strength">
+    <div className="password-strength">
       <div className="strength-bar" aria-hidden="true">
         <div className={`strength-fill strength-${score}`} style={{ width: `${((score + 1) / 5) * 100}%` }} />
       </div>

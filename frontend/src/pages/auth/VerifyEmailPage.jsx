@@ -50,7 +50,7 @@ export function VerifyEmailPage() {
     })
 
   return (
-    <div className="auth-card" id="verify-email-box">
+    <div className="auth-card">
       <div className="auth-header">
         <h2>Verify Your Email</h2>
         <p>
@@ -60,16 +60,16 @@ export function VerifyEmailPage() {
       </div>
 
       {message.text && (
-        <div className={`alert-message alert-${message.type}`} id="status-message">
+        <div className={`alert-message alert-${message.type}`}>
           {message.text}
         </div>
       )}
 
       <div className="auth-form">
-        <button type="button" id="btn-check-verified" className="btn-primary btn-block" onClick={handleCheckAgain} disabled={loading}>
+        <button type="button" className="btn-primary btn-block" onClick={handleCheckAgain} disabled={loading}>
           I&apos;ve Verified My Email
         </button>
-        <button type="button" id="btn-resend-verification" className="btn-oauth btn-block" onClick={handleResend} disabled={loading}>
+        <button type="button" className="btn-oauth btn-block" onClick={handleResend} disabled={loading}>
           Resend Verification Email
         </button>
       </div>

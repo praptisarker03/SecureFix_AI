@@ -7,7 +7,7 @@ import { SEVERITIES } from './constants'
 const SQL_KEYWORD = /\b(select|insert|update|delete)\b[\s\S]*\b(from|into|set|where)\b/i
 const SQL_DYNAMIC = /(["'`]\s*\+|\+\s*["'`]|\$\{|\.format\(|\bf["']|["']\s*%\s*[(\w])/
 
-export const QUICK_RULES = [
+const QUICK_RULES = [
   {
     id: 'sql-injection',
     title: 'SQL query built from strings',

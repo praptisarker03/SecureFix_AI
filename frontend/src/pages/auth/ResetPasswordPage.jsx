@@ -22,7 +22,7 @@ export function ResetPasswordPage() {
 
   if (!user) {
     return (
-      <div className="auth-card" id="reset-invalid">
+      <div className="auth-card">
         <div className="auth-header">
           <h2>Reset Link Invalid</h2>
           <p>This password reset link is invalid or has expired.</p>
@@ -59,14 +59,14 @@ export function ResetPasswordPage() {
   }
 
   return (
-    <div className="auth-card" id="reset-password-box">
+    <div className="auth-card">
       <div className="auth-header">
         <h2>Choose a New Password</h2>
         <p>Setting a new password for {user.email}</p>
       </div>
 
       {message.text && (
-        <div className={`alert-message alert-${message.type}`} id="status-message">
+        <div className={`alert-message alert-${message.type}`}>
           {message.text}
         </div>
       )}
@@ -99,7 +99,7 @@ export function ResetPasswordPage() {
           />
         </div>
 
-        <button type="submit" id="btn-update-password" className="btn-primary btn-block" disabled={loading}>
+        <button type="submit" className="btn-primary btn-block" disabled={loading}>
           {loading ? <span className="spinner-text">Processing...</span> : 'Update Password'}
         </button>
       </form>

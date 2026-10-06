@@ -10,6 +10,15 @@ const STEPS = [
   { id: 'verify', label: 'Verify', detail: 'Re-scanning patched files and checking syntax' },
 ]
 
+const STATUS_LABEL = { done: 'Done', active: 'In progress', failed: 'Failed', pending: 'Waiting' }
+
+function StepDot({ status, number }) {
+  if (status === 'done') return <Icon name="check" size={16} strokeWidth={2.6} />
+  if (status === 'active') return <span className="spinner" />
+  if (status === 'failed') return <Icon name="x" size={16} strokeWidth={2.6} />
+  return number
+}
+
 // Renders whatever the backend reports for the scan:
 //   { status: 'running' | 'done' | 'failed', stage, progress (0-100), log: [], counts }
 // TODO(backend): poll GET /scans/{id} every few seconds while status is 'running'.
@@ -35,7 +44,11 @@ export function ScanProgressPage() {
   const done = scan.status === 'done'
   const failed = scan.status === 'failed'
   const activeIdx = done ? STEPS.length : Math.max(0, STEPS.findIndex((s) => s.id === scan.stage))
-  const stepState = STEPS.map((_, i) => (i < activeIdx ? 'done' : i === activeIdx ? (failed ? 'failed' : 'active') : 'pending'))
+  const stepStatus = (i) => {
+    if (i < activeIdx) return 'done'
+    if (i > activeIdx) return 'pending'
+    return failed ? 'failed' : 'active'
+  }
 
   return (
     <>
@@ -53,13 +66,11 @@ export function ScanProgressPage() {
         <ProgressBar value={scan.progress || 0} tone={done ? 'good' : 'brand'} />
         <ol className="stepper">
           {STEPS.map((s, i) => (
-            <li key={s.id} className={`step step-${stepState[i]}`}>
-              <span className="step-dot">
-                {stepState[i] === 'done' ? <Icon name="check" size={16} strokeWidth={2.6} /> : stepState[i] === 'active' ? <span className="spinner" /> : stepState[i] === 'failed' ? <Icon name="x" size={16} strokeWidth={2.6} /> : i + 1}
-              </span>
+            <li key={s.id} className={`step step-${stepStatus(i)}`}>
+              <span className="step-dot"><StepDot status={stepStatus(i)} number={i + 1} /></span>
               <div>
                 <strong>{s.label}</strong>
-                <span>{{ done: 'Done', active: 'In progress', failed: 'Failed', pending: 'Waiting' }[stepState[i]]}</span>
+                <span>{STATUS_LABEL[stepStatus(i)]}</span>
               </div>
             </li>
           ))}

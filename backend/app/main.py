@@ -11,7 +11,7 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Enable Cross-Origin Resource Sharing (CORS) for frontend communication
+# Let the frontend call the API from the browser
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(
         CORSMiddleware,
@@ -21,7 +21,6 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
-# Include v1 API router
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 

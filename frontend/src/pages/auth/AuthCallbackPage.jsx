@@ -18,7 +18,7 @@ export function AuthCallbackPage() {
 
   if (linkError) {
     return (
-      <div className="auth-card" id="callback-error">
+      <div className="auth-card">
         <div className="auth-header">
           <h2>Link Not Valid</h2>
           <p>{linkError}. Sign in to request a new confirmation email.</p>

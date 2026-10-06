@@ -2,12 +2,8 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { LoadingScreen } from '../ui/Elements'
 import { useAuth } from '../../context/AuthContext'
 
-// Guards a route in three steps:
-//   1. authentication - a logged-in user is required
-//   2. verification   - the user's email must be confirmed
-//   3. authorization  - optional `roles` list the user's role must be in
-// This only controls the UI. Real data must be protected by the backend
-// (JWT checks in FastAPI) and by Row Level Security in Supabase.
+// Checks, in order: logged in -> email verified -> allowed role.
+// This only protects the UI; the backend and Supabase RLS protect the data.
 export function ProtectedRoute({ children, roles }) {
   const { user, loading, role, emailVerified, isPasswordRecovery } = useAuth()
   const location = useLocation()
@@ -17,7 +13,6 @@ export function ProtectedRoute({ children, roles }) {
   }
 
   if (!user) {
-    // Redirect to /login if not authenticated
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 

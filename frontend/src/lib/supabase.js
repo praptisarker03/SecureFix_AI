@@ -8,7 +8,6 @@ const rawUrl = (import.meta.env.VITE_SUPABASE_URL || '')
 
 const rawKey = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '').trim()
 
-// Check whether real credentials have been configured
 export const isSupabaseConfigured = Boolean(
   rawUrl &&
   rawKey &&
@@ -16,7 +15,7 @@ export const isSupabaseConfigured = Boolean(
   rawUrl.startsWith('https://')
 )
 
-// Fallback to avoid Vite startup crash if credentials are not configured yet
+// Placeholder values keep the app loading when .env is not filled in yet
 const supabaseUrl = isSupabaseConfigured ? rawUrl : 'https://placeholder.supabase.co'
 const supabaseKey = isSupabaseConfigured ? rawKey : 'placeholder-anon-key'
 

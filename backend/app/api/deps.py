@@ -1,7 +1,4 @@
-"""
-Common dependencies for FastAPI endpoints.
-Shared database sessions, auth checks, and external services can be provided here.
-"""
+"""Auth checks used by the API routes: authentication, email verification, role."""
 
 from typing import Any, Callable, Dict, Optional
 

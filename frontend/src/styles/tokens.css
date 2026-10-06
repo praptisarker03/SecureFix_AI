@@ -1,7 +1,5 @@
-/* Design tokens. Snyk-like structure (deep indigo heroes, violet primary,
-   light app surfaces) kept deliberately flat: no gradients, soft borders,
-   one accent color. Severity colors are the fixed status palette and always
-   appear next to a text label. */
+/* Design tokens: colors, radius, shadows and fonts used across the app.
+   Severity colors always appear next to a text label. */
 :root {
   --ink-950: #0d0b1f;
   --ink-900: #15122f;

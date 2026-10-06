@@ -129,7 +129,6 @@ label { font-size: 13px; font-weight: 500; color: var(--text-2); }
 .pub-links a:hover { color: #fff; }
 .pub-links a:hover::after { transform: scaleX(1); }
 .pub-soon { color: var(--ink-text-2); font-size: 14px; font-weight: 500; opacity: 0.55; cursor: default; }
-.pub-soon small { margin-left: 4px; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--ink-line); font-family: var(--mono); font-size: 10px; }
 .pub-cta { display: flex; align-items: center; gap: 18px; }
 .pub-login { color: var(--ink-text); font-size: 14px; font-weight: 500; }
 .pub-login:hover { color: #fff; }
@@ -454,7 +453,6 @@ textarea.qc-code::placeholder { color: var(--ink-text-2); }
 .nav-item.active::before { content: ''; position: absolute; left: -12px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--brand-on-dark); animation: enter 0.25s var(--ease); }
 .nav-item-soon { cursor: not-allowed; opacity: 0.5; }
 .nav-item-soon:hover { background: none; color: var(--ink-text-2); }
-.soon-tag { margin-left: auto; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--ink-line); font-family: var(--mono); font-size: 10px; }
 .sidebar-user { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding: 12px 6px 0; border-top: 1px solid var(--ink-line); }
 .sidebar-user-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .sidebar-user-text strong { font-size: 13.5px; font-weight: 500; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

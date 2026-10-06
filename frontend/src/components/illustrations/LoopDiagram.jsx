@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Icon } from '../ui/Icons'
 
-// The Detect → Fix → Verify cycle drawn as a ring. A pulse travels the ring
-// and each node lights up as it arrives; the centre shows that stage.
+// Detect -> Fix -> Verify drawn as a ring; the active stage is shown in the centre.
 const R = 118
 const C = 160
 const point = (deg) => {

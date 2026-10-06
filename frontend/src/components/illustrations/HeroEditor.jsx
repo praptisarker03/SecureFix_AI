@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Icon } from '../ui/Icons'
 
-// Landing-page illustration: a code editor that is scanned, gets a finding on
-// the vulnerable line, receives a patch and is verified. The code is always
-// visible, so the panel never looks empty between loops.
+// Landing-page animation: the code is scanned, a finding appears on the
+// vulnerable line, the line is patched and then verified.
 
 // [className, text] tokens per line; '' = plain text
 const CODE = [

@@ -2,9 +2,9 @@
 // (Dashboard > Authentication > Providers > Email > Password requirements),
 // so keep these values in sync with that setting.
 
-export const PASSWORD_MIN_LENGTH = 8
+const PASSWORD_MIN_LENGTH = 8
 // bcrypt (used by Supabase) ignores everything after 72 bytes
-export const PASSWORD_MAX_LENGTH = 72
+const PASSWORD_MAX_LENGTH = 72
 
 export function getPasswordChecks(password) {
   return [
